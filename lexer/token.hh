@@ -8,50 +8,50 @@ namespace Cougar {
 
 enum class Token {
   // keywords
-  kw_private,
-  kw_public,
-  kw_exported,
-  kw_function,
-  kw_return,
+  KwPrivate,
+  KwPublic,
+  KwExported,
+  KwFunction,
+  KwReturn,
 
   // litereals
-  lit_number,
-  lit_string,
+  LitNumber,
+  LitString,
 
   // special
-  brace_open,
-  brace_close,
-  parent_open,
-  parent_close,
-  semicolon,
-  operat,
-  comma,
+  BraceOpen,
+  BraceClose,
+  ParentOpen,
+  ParentClose,
+  Semicolon,
+  Operator,
+  Comma,
 
   // other
-  identifier,
+  Identifier,
 
   // EOF
-  eof
+  Eof
 };
 
 constexpr std::string_view TOKEN_NAMES[] = {
     // keywords
-    "kw_private", "kw_public", "kw_exported", "kw_function", "kw_return",
+    "KwPrivate", "KwPublic", "KwExported", "KwFunction", "KwReturn",
 
     // litereals
-    "lit_number", "lit_string",
+    "LitNumber", "LitString",
 
     // braces, parenth, operators
-    "brace_open", "brace_close", "parent_open", "parent_close", "semicolon",
-    "operat", "comma",
+    "BraceOpen", "BraceClose", "ParentOpen", "ParentClose", "Semicolon",
+    "Operator", "comma",
 
     // other
-    "identifier",
+    "Identifier",
 
     // eof
-    "eof"};
+    "Eof"};
 
-static_assert(TOKEN_NAMES[int(Token::eof)] == "eof");
+static_assert(TOKEN_NAMES[int(Token::Eof)] == "Eof");
 
 } // namespace Cougar
 

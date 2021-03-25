@@ -11,6 +11,32 @@ namespace Cougar {
 
 namespace {
 
+struct SingleCharToken {
+  char chr;
+  Token token;
+};
+
+constexpr SingleCharToken SINGLE_CHAR_TOKENS[] = {
+    {';', Token::Semicolon},  {',', Token::Comma},
+    {'{', Token::BraceOpen},  {'}', Token::BraceClose},
+    {'(', Token::ParentOpen}, {')', Token::ParentClose},
+    {'<', Token::Operator},   {'>', Token::Operator},
+
+};
+
+struct ReservedWord {
+  const char *str;
+  Token token;
+};
+
+constexpr ReservedWord RESERVED_WORDS[] = {
+    {"return", Token::KwReturn},
+    {"function", Token::KwFunction},
+    {"private", Token::KwPrivate},
+    {"public", Token::KwPublic},
+
+};
+
 bool isNumber(int c) { return std::isdigit(c); }
 
 bool isIdentifierFirst(int c) { return std::isalpha(c) || c == '_'; }
@@ -28,7 +54,7 @@ Token Lexer::getNext() {
   skipWhitespace();
 
   if (mLast < 0) {
-    return Token::eof;
+    return Token::Eof;
   }
 
   if (isNumber(mLast))
@@ -42,17 +68,6 @@ Token Lexer::getNext() {
 }
 
 Token Lexer::parseSingleCharacterToken() {
-  struct SingleCharToken {
-    char chr;
-    Token token;
-  };
-  constexpr SingleCharToken SINGLE_CHAR_TOKENS[] = {
-      {';', Token::semicolon},   {',', Token::comma},
-      {'{', Token::brace_open},  {'}', Token::brace_close},
-      {'(', Token::parent_open}, {')', Token::parent_close},
-      {'<', Token::operat},      {'>', Token::operat},
-
-  };
 
   auto it =
       std::find_if(std::begin(SINGLE_CHAR_TOKENS), std::end(SINGLE_CHAR_TOKENS),
@@ -92,7 +107,7 @@ Token Lexer::parseNumber() {
     mLocation.column++;
     mLast = readNextChar();
   }
-  return Token::lit_number;
+  return Token::LitNumber;
 }
 
 Token Lexer::parseIdentifier() {
@@ -101,7 +116,14 @@ Token Lexer::parseIdentifier() {
     mLocation.column++;
     mLast = readNextChar();
   }
-  return Token::identifier;
+
+  // identify reserved words
+  auto it = std::find_if(std::begin(RESERVED_WORDS), std::end(RESERVED_WORDS),
+                         [&](auto &rw) { return rw.str == mCurrentToken; });
+  if (it == std::end(RESERVED_WORDS))
+    return Token::Identifier;
+  else
+    return it->token;
 }
 
 } // namespace Cougar

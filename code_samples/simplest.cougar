@@ -1,4 +1,4 @@
 
-public function main(int argc, ptr<ptr<byte>> argv) {
+public function int32 main(int32 argc, ptr<ptr<byte>> argv) {
   return argc;
 }

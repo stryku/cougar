@@ -15,7 +15,7 @@ int main(int, char **) {
     auto loc = lexer.getCurrentLocation();
     fmt::print("{:3}:{:3} {} : '{}'\n", loc.line, loc.column, token,
                lexer.getCurrentTokenText());
-    if (token == Token::eof)
+    if (token == Token::Eof)
       break;
   }
 }

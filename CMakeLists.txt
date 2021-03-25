@@ -10,4 +10,7 @@ add_compile_options(-Wall -Wextra -Werror)
 find_package(fmt CONFIG REQUIRED)
 
 add_subdirectory(lexer)
+add_subdirectory(ast)
+add_subdirectory(parser)
+add_subdirectory(types)
 
