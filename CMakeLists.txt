@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_compile_options(-Wall -Wextra -Werror)
 
 find_package(fmt CONFIG REQUIRED)
+find_package(llvm REQUIRED)
 
 add_subdirectory(lexer)
 add_subdirectory(parser_ast)
