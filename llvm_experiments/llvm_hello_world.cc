@@ -1,7 +1,9 @@
+#include <llvm/IR/Function.h>
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/LegacyPassManager.h>
 #include <llvm/IR/Module.h>
+#include <llvm/IR/Type.h>
 
 #include <llvm/Support/FileSystem.h>
 #include <llvm/Support/Host.h>
@@ -14,12 +16,35 @@
 
 #include <fmt/format.h>
 
-int main(int, char **) {
-  llvm::LLVMContext context;
-  llvm::IRBuilder<> builder(context);
+void buildCode(llvm::LLVMContext &context, llvm::Module &module) {
+  // llvm::IRBuilder<> builder(context);
 
-  std::unique_ptr<llvm::Module> module =
-      std::make_unique<llvm::Module>("hello world", context);
+  // create function
+  llvm::Type *intType = llvm::Type::getInt32Ty(context);
+  llvm::PointerType *charStarStarType =
+      llvm::Type::getInt8PtrTy(context)->getPointerTo();
+
+  llvm::Type *params[] = {intType, charStarStarType};
+
+  llvm::FunctionType *functionType =
+      llvm::FunctionType::get(intType, params, false);
+
+  llvm::Function *function = llvm::Function::Create(
+      functionType, llvm::Function::ExternalLinkage, "main", module);
+
+  // Set names for arguments
+  function->getArg(0)->setName("argc");
+  function->getArg(1)->setName("argv");
+
+  // add entry basic block
+  llvm::BasicBlock *bb = llvm::BasicBlock::Create(context, "entry", function);
+
+  // return argc
+  llvm::Value *argc = function->getArg(0);
+  llvm::ReturnInst::Create(context, argc, bb);
+}
+
+void compile(llvm::LLVMContext &context, llvm::Module &module) {
 
   auto targetTriple = llvm::sys::getDefaultTargetTriple();
   fmt::print("target triple: {}\n", targetTriple);
@@ -40,7 +65,6 @@ int main(int, char **) {
   if (!target) {
     throw std::runtime_error(
         fmt::format("Error intializing compilation target: {}", error));
-    return 1;
   }
 
   // init machine
@@ -52,8 +76,8 @@ int main(int, char **) {
       target->createTargetMachine(targetTriple, cpu, features, opt, relocModel);
 
   // configure module
-  module->setDataLayout(targetMachine->createDataLayout());
-  module->setTargetTriple(targetTriple);
+  module.setDataLayout(targetMachine->createDataLayout());
+  module.setTargetTriple(targetTriple);
 
   // emit object code
   auto filename = "output.o";
@@ -73,10 +97,35 @@ int main(int, char **) {
     throw std::runtime_error("targetMachine can't emit a file of this type");
   }
 
-  pass.run(*module);
+  pass.run(module);
   dest.flush();
 
   // TA-DA
 
   fmt::print("Output written to {}\n", filename);
+  (void)context;
+}
+
+void dumpAssembly(llvm::LLVMContext &context, llvm::Module &module) {
+  module.print(llvm::errs(), nullptr);
+
+  (void)context;
+}
+
+int main(int argc, char **argv) {
+
+  llvm::LLVMContext context;
+
+  // std::unique_ptr<llvm::Module> module =
+  //     std::make_unique<llvm::Module>("hello world", context);
+
+  llvm::Module module("hello world", context);
+
+  buildCode(context, module);
+
+  if (argc > 1 && argv[1] == std::string("o")) {
+    compile(context, module);
+  } else {
+    dumpAssembly(context, module);
+  }
 }
