@@ -1,14 +1,19 @@
 #include <fmt/core.h>
 
+#include "input_source.hh"
 #include "lexer.hh"
 #include "token.hh"
 
-int main(int, char **) {
+int main(int argc, char **argv) {
   fmt::print("Lexer!\n");
 
-  using namespace Cougar;
+  using namespace Cougar::Lexer;
 
-  Lexer lexer;
+  if (argc < 2)
+    throw std::runtime_error("Argument missing: file path");
+
+  InputSource src(argv[1]);
+  Lexer lexer(src);
 
   while (true) {
     auto token = lexer.getNext();

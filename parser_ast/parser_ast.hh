@@ -3,11 +3,7 @@
 #include <memory>
 #include <vector>
 
-namespace Cougar {
-
-class Type;
-
-namespace Ast {
+namespace Cougar::ParserAST {
 
 enum class Access { Private, Public };
 
@@ -32,12 +28,11 @@ class FunctionArg : public INode {
 
 private:
   std::string mName;
-  Type *mType;
 };
 
 class FunctionDefinition : public INode {
 public:
-  FunctionDefinition(Access access, const Type &retType,
+  FunctionDefinition(Access access, const std::string &retType,
                      const std::string &name)
       : mAccess(access), mReturnType(retType), mName(name) {}
 
@@ -45,7 +40,7 @@ public:
 
 private:
   Access mAccess;
-  const Type &mReturnType;
+  std::string mReturnType;
   std::string mName;
   std::vector<std::unique_ptr<FunctionArg>> mArgs;
   std::vector<std::unique_ptr<INode>> mBody;
@@ -61,7 +56,5 @@ class ReturnStatement : public INode {
 private:
   std::unique_ptr<Expression> mExpression;
 };
-
-} // namespace Ast
 
 } // namespace Cougar

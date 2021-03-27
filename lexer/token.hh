@@ -4,7 +4,7 @@
 
 #include <string_view>
 
-namespace Cougar {
+namespace Cougar::Lexer {
 
 enum class Token {
   // keywords
@@ -53,15 +53,15 @@ constexpr std::string_view TOKEN_NAMES[] = {
 
 static_assert(TOKEN_NAMES[int(Token::Eof)] == "Eof");
 
-} // namespace Cougar
+} // namespace Cougar::Lexer
 
-template <> struct fmt::formatter<Cougar::Token> {
+template <> struct fmt::formatter<Cougar::Lexer::Token> {
   template <typename ParseContext> constexpr auto parse(ParseContext &ctx) {
     return ctx.begin();
   }
 
   template <typename FormatContext>
-  auto format(const Cougar::Token &token, FormatContext &ctx) {
-    return format_to(ctx.out(), "{}", Cougar::TOKEN_NAMES[int(token)]);
+  auto format(const Cougar::Lexer::Token &token, FormatContext &ctx) {
+    return format_to(ctx.out(), "{}", Cougar::Lexer::TOKEN_NAMES[int(token)]);
   }
 };

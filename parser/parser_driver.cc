@@ -1,16 +1,21 @@
 #include <fmt/core.h>
 
-#include "ast/ast.hh"
 #include "parser.hh"
+#include "parser_ast/parser_ast.hh"
 
-int main(int, char **) {
+#include "lexer/input_source.hh"
+
+int main(int argc, char **argv) {
   fmt::print("Parser!\n");
+
+  if (argc < 2)
+    throw std::runtime_error("Argument missing: file path");
 
   using namespace Cougar;
 
-  Parser parser;
+  Lexer::InputSource src(argv[1]);
+  Parser::Parser parser;
 
-  auto module = parser.parseModule();
-
+  auto module = parser.parseModule(src);
   module->dump();
 }

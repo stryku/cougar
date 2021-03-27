@@ -1,10 +1,11 @@
 add_library(lexer_lib 
+    input_source.hh input_source.cc
     token.hh token.cc
     lexer.hh lexer.cc
 )
 
 add_executable(lexer_driver
-    driver.cc
+    lexer_driver.cc
 )
 
 target_link_libraries(lexer_lib PRIVATE fmt::fmt)

@@ -2,26 +2,26 @@
 
 #include "lexer/lexer.hh"
 
-#include "types/type_container.hh"
-
 #include <fmt/core.h>
 
 #include <memory>
 
 namespace Cougar {
 
-namespace Ast {
+namespace ParserAST {
 class INode;
 class Module;
 enum class Access;
-} // namespace Ast
+} // namespace ParserAST
+
+namespace Parser {
 
 class Parser {
 public:
-  std::unique_ptr<Ast::Module> parseModule();
+  std::unique_ptr<ParserAST::Module> parseModule(Lexer::InputSource &input);
 
 private:
-  std::unique_ptr<Ast::INode> parseFunction(Ast::Access access);
+  std::unique_ptr<ParserAST::INode> parseFunction(ParserAST::Access access);
 
   [[noreturn]] void throwParseError(const std::string &msg);
 
@@ -31,8 +31,8 @@ private:
     throwParseError(fmt::format(format, args...));
   }
 
-  Lexer mLexer;
-  TypeContainer mTypes;
+  std::unique_ptr<Lexer::Lexer> mLexer;
 };
 
+} // namespace Parser
 } // namespace Cougar

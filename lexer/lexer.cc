@@ -1,5 +1,8 @@
 #include "lexer.hh"
+
 #include "token.hh"
+
+#include "input_source.hh"
 
 #include <algorithm>
 #include <cctype>
@@ -7,7 +10,7 @@
 
 #include <stdio.h>
 
-namespace Cougar {
+namespace Cougar::Lexer {
 
 namespace {
 
@@ -44,7 +47,9 @@ bool isIdentifier(char c) { return std::isalnum(c) || c == '_'; }
 
 } // namespace
 
-int Lexer::readNextChar() { return ::getchar(); }
+Lexer::Lexer(InputSource &is) : mSource(is) {}
+
+int Lexer::readNextChar() { return mSource.readNextChar(); }
 
 Token Lexer::getNext() {
   mCurrentToken.clear();
@@ -126,4 +131,4 @@ Token Lexer::parseIdentifier() {
     return it->token;
 }
 
-} // namespace Cougar
+} // namespace Cougar::Lexer

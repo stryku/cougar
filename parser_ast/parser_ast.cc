@@ -1,12 +1,8 @@
-#include "ast.hh"
-
-#include "types/type.hh"
+#include "parser_ast.hh"
 
 #include <fmt/core.h>
 
-#include <stdexcept>
-
-namespace Cougar::Ast {
+namespace Cougar::ParserAST {
 
 namespace {
 constexpr int INDENT = 2;
@@ -30,7 +26,7 @@ void Module::dump(int indent) const {
 
 void FunctionDefinition::dump(int indent) const {
   fmt::print("{:{}} FunctionDefinition: name={}, ret={}\n", "", indent, mName,
-             mReturnType.name());
+             mReturnType);
 }
 
-} // namespace Cougar::Ast
+} // namespace Cougar::ParserAST
