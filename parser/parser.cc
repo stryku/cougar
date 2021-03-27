@@ -46,8 +46,7 @@ Parser::parseModule(Lexer::InputSource &src) {
 
 void Parser::throwParseError(const std::string &msg) {
   auto loc = mLexer->getCurrentLocation();
-  throw std::runtime_error(
-      fmt::format("{}:{}: parse error: {}", loc.line, loc.column, msg));
+  throw std::runtime_error(fmt::format("{}: parse error: {}", loc, msg));
 }
 
 std::unique_ptr<INode> Parser::parseFunction(Access access) {

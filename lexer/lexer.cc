@@ -78,9 +78,8 @@ Token Lexer::parseSingleCharacterToken() {
       std::find_if(std::begin(SINGLE_CHAR_TOKENS), std::end(SINGLE_CHAR_TOKENS),
                    [&](auto &sct) { return sct.chr == mLast; });
   if (it == std::end(SINGLE_CHAR_TOKENS)) {
-    throw std::runtime_error(
-        fmt::format("Lexer error at {}:{}. Unknown character '{}'",
-                    mLocation.line, mLocation.column, mLast));
+    throw std::runtime_error(fmt::format(
+        "{}: Lexer error: unknown character '{}'", mLocation, mLast));
   }
 
   mCurrentToken.push_back(mLast);

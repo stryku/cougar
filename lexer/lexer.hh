@@ -1,5 +1,7 @@
 #pragma once
 
+#include <fmt/format.h>
+
 #include <string>
 #include <string_view>
 
@@ -36,3 +38,14 @@ private:
 };
 
 } // namespace Cougar::Lexer
+
+template <> struct fmt::formatter<Cougar::Lexer::SourceLocation> {
+  template <typename ParseContext> constexpr auto parse(ParseContext &ctx) {
+    return ctx.begin();
+  }
+
+  template <typename FormatContext>
+  auto format(const Cougar::Lexer::SourceLocation &v, FormatContext &ctx) {
+    return format_to(ctx.out(), ":{}:{}", v.line, v.column);
+  }
+};
