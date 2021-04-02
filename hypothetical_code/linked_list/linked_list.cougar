@@ -1,0 +1,104 @@
+module linked_list
+
+public class LinkedList<any_type T> {
+
+    attribute copyable = false;
+
+    // it is neccessary to allow for nested classes,
+    // to keep "mental compatibility" with C++
+    private struct Node {
+        T data;
+        owning_pr<Node> next;
+    }
+
+    private owning_ptr<Node> first;
+
+    public method bool empty() const {
+        return first == null;
+    }
+
+    public method void push_front(T v) {
+
+        // allocate takes type as the first param
+        // the rest are constructor params
+        // for constructorless classes (structs?) setting individual fields is allowed
+        auto new_node = allocate(Node, data = v, next = first);
+
+        // somehow above and below, the assignment from/to first
+        // is really a move assignment.
+        // Is special syntax required for that?
+        // Can we just infer it from the type?
+        // What if the type allows for both copy and swap,
+        // and want to swap explicitly?
+        // string is a good example of a type that would be 
+        // copyable
+
+        first = new_node;
+
+        // maybe like this?
+        auto new_node = allocate(Node, data = v, next <- first);
+        first <- new_node;
+    }
+
+    T pop_front() {
+        assert(first, "List empty");
+
+        first <- first->next;
+        // what happens above?
+        // 1: swap(first, first->next)
+        // 2. nothing
+
+        // or...
+        // 1. first destroyed...
+        // 2. crash!
+
+        // bettr:
+        auto removed_node <- first;
+        // first is null now
+        first <- remove_node->next;
+        // removed node will die of old age
+
+        // experiments with other forms of 'move from' operator
+        <:
+        =<
+        <<
+        <<<
+        <#
+
+        return removed_node->data;
+    }
+}
+
+
+// how could allocate be implemented ?
+
+auto allocate(type T, any_type args ...) {
+    address a = malloc(size = T.size, alignment = T.alignment);
+    ptr<T> p = construct(a, <-args.unpack());
+    owning_ptr<T> op = p;
+    unique_ptr<T> up(p);
+    return up;
+}
+
+class unique_ptr<any_type T>{
+    private ptr<T> _ptr = null;
+
+    attribute copyable = false;
+
+    destructor() {
+        delete(_ptr);
+    }
+
+    method ptr<T> get() { return _ptr; }
+    public method ptr<T> operator-> () { return _ptr; }
+
+    // how to get const versions of the above fo free?
+    public method auto get() const(auto) { return _ptr; } // ugly!!!
+
+    // maybe just:
+    public method auto get() { return _ptr; }
+    // and let the compiler figure it out?
+}
+
+
+
