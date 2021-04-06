@@ -29,4 +29,27 @@ TEST(ZoneAllocatorTests, SimpleAllocation) {
   EXPECT_GT(a.getUsedBytes(), 0);
 }
 
+TEST(ZoneAllocatorTests, AllocationWithParams) {
+
+  class Iface {
+  public:
+    virtual int getNum() const = 0;
+  };
+
+  class Impl : public Iface {
+  public:
+    Impl(int a, int b) { mNum = a + b; }
+    int getNum() const override { return mNum; }
+
+  private:
+    int mNum;
+  };
+
+  ZoneAllocator a;
+  Iface *i = a.allocate<Impl>(7, 11);
+
+  ASSERT_TRUE(i);
+  EXPECT_EQ(7 + 11, i->getNum());
+}
+
 } // namespace Cougar::Utils::Tests
