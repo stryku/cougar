@@ -31,4 +31,13 @@ TEST(Utf8DecoderTests, UnicodeDecoding) {
   EXPECT_EQ(expectedOutput, output);
 }
 
+TEST(Utf8DecoderTests, NormalizeEndline) {
+  const char *input = "\r\n\n\r\n";
+  Utf8Decoder decoder(input);
+  EXPECT_EQ('\n', decoder.next());
+  EXPECT_EQ('\n', decoder.next());
+  EXPECT_EQ('\n', decoder.next());
+  EXPECT_EQ(0, decoder.next());
+}
+
 } // namespace Cougar::Utils::Tests

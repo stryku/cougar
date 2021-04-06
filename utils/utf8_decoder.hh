@@ -24,6 +24,17 @@ public:
     if (mCurrent == mEnd)
       return 0;
 
+    // turn '\r\n' into '\n'
+    if (*mCurrent == '\r') {
+      mCurrent++;
+      if (mCurrent == mEnd)
+        return '\n';
+      if (*mCurrent == '\n') {
+        mCurrent++;
+        return '\n';
+      }
+    }
+
     // see https://en.wikipedia.org/wiki/UTF-8#Encoding
 
     // ascii char
