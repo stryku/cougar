@@ -1,4 +1,4 @@
-add_library(types_lib 
+add_library(types_lib EXCLUDE_FROM_ALL
   type.hh
   type.cc
   type_container.hh

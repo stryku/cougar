@@ -1,4 +1,4 @@
-add_library(parser_ast_lib 
+add_library(parser_ast_lib EXCLUDE_FROM_ALL
   parser_ast.hh
   parser_ast.cc
 )

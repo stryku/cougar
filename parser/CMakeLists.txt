@@ -1,9 +1,9 @@
-add_library(parser_lib 
+add_library(parser_lib EXCLUDE_FROM_ALL
   parser.hh
   parser.cc
 )
 
-add_executable(parser_driver
+add_executable(parser_driver EXCLUDE_FROM_ALL
   parser_driver.cc
 )
 

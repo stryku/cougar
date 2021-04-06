@@ -1,10 +1,10 @@
-add_library(lexer_lib 
+add_library(lexer_lib EXCLUDE_FROM_ALL
     input_source.hh input_source.cc
     token.hh token.cc
     lexer.hh lexer.cc
 )
 
-add_executable(lexer_driver
+add_executable(lexer_driver EXCLUDE_FROM_ALL
     lexer_driver.cc
 )
 

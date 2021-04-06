@@ -1,4 +1,4 @@
-add_executable(llvm_hello_world
+add_executable(llvm_hello_world EXCLUDE_FROM_ALL
   llvm_hello_world.cc
 )
 
