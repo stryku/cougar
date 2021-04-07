@@ -19,7 +19,7 @@ TEST(ZoneAllocatorTests, SimpleAllocation) {
 
   ZoneAllocator a;
 
-  SomeStruct *s = a.allocate<SomeStruct>();
+  SomeStruct *s = a.make<SomeStruct>();
 
   ASSERT_TRUE(s);
   EXPECT_EQ(44, s->x);
@@ -46,7 +46,7 @@ TEST(ZoneAllocatorTests, AllocationWithParams) {
   };
 
   ZoneAllocator a;
-  Iface *i = a.allocate<Impl>(7, 11);
+  Iface *i = a.make<Impl>(7, 11);
 
   ASSERT_TRUE(i);
   EXPECT_EQ(7 + 11, i->getNum());

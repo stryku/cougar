@@ -1,5 +1,7 @@
 #include "zone_allocator.hh"
 
+#include <cstring>
+
 namespace Cougar::Utils {
 
 constexpr std::size_t BLOCK_SIZE = 8000;
@@ -37,6 +39,16 @@ void *ZoneAllocator::allocateInNewBlock(std::size_t size,
   void *aligned = std::align(alignment, size, block.mCurrent, block.mSpace);
   block.mCurrent = (std::byte *)aligned + size;
   return aligned;
+}
+
+std::string_view ZoneAllocator::strdup(std::string_view src) {
+  if (src.empty())
+    return {};
+
+  char *c = (char *)doAllocate(src.size() + 1, 1);
+  std::memcpy(c, src.data(), src.size());
+  c[src.size()] = 0;
+  return std::string_view(c, src.size());
 }
 
 ZoneAllocator::Block::~Block() { std::free(mData); }

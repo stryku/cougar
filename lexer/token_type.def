@@ -1,0 +1,25 @@
+// keywords
+TOKEN(KwPrivate),
+TOKEN(KwPublic),
+TOKEN(KwExported),
+TOKEN(KwFunction),
+TOKEN(KwReturn),
+
+// litereals
+TOKEN(LitNumber),
+TOKEN(LitString),
+
+// special
+TOKEN(BraceOpen),
+TOKEN(BraceClose),
+TOKEN(ParentOpen),
+TOKEN(ParentClose),
+TOKEN(Semicolon),
+TOKEN(Operator),
+TOKEN(Comma),
+
+// other
+TOKEN(Identifier),
+
+// EOF
+TOKEN(Eof)
