@@ -4,12 +4,12 @@ add_library(lexer_lib EXCLUDE_FROM_ALL
     lexer.hh lexer.cc
 )
 
-add_executable(lexer_driver EXCLUDE_FROM_ALL
+add_executable(lexer_driver
     lexer_driver.cc
 )
 
-target_link_libraries(lexer_lib PRIVATE fmt::fmt)
+target_link_libraries(lexer_lib PRIVATE utils_lib)
+
 target_include_directories(lexer_lib INTERFACE ..)
 
 target_link_libraries(lexer_driver PRIVATE lexer_lib)
-target_link_libraries(lexer_driver PRIVATE fmt::fmt)

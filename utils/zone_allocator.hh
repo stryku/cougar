@@ -19,11 +19,17 @@ namespace Cougar::Utils {
 // constructuble objects can be allocated.
 class ZoneAllocator {
 public:
+  // Allocaste space and create object in allocated space
   template <typename T, typename... Args> T *allocate(Args &&...args) {
     static_assert(std::is_trivially_destructible_v<T>,
                   "Zone allocator can only hold trivially destructible types");
     void *addr = doAllocate(sizeof(T), alignof(T));
     return new (addr) T(std::forward<Args>(args)...);
+  }
+
+  // Allocate uninitialized block
+  std::byte *allocateBlock(std::size_t size, std::size_t alignment = 1) {
+    return (std::byte *)doAllocate(size, alignment);
   }
 
   // usage info

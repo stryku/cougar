@@ -1,9 +1,13 @@
 add_library(utils_lib
   utf8_decoder.hh utf8_decoder.cc
   zone_allocator.hh zone_allocator.cc
+  file_loader.hh file_loader.cc
 )
 
 target_include_directories(utils_lib INTERFACE ..)
+
+target_link_libraries(utils_lib PRIVATE fmt::fmt)
+
 
 add_subdirectory(tests)
 
