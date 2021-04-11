@@ -20,6 +20,10 @@ public:
     // TODO detect and skip over BOM here
   }
 
+  const char *getCurrentPosition() const {
+    return reinterpret_cast<const char *>(mCurrent);
+  }
+
   rune_t next() {
     if (mCurrent == mEnd)
       return 0;

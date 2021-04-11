@@ -46,29 +46,7 @@ bool isNumber(int c) { return std::isdigit(c); }
 bool isIdentifierFirst(int c) { return std::isalpha(c) || c == '_'; }
 bool isIdentifier(char c) { return std::isalnum(c) || c == '_'; }
 
-class Lexer {
-public:
-  Lexer(std::string_view buffer, Utils::ZoneAllocator &zone)
-      : mDecoder(buffer), mZone(zone) {}
-
-  std::vector<Token *> lex();
-
-private:
-  TokenType getNext();
-
-  Utils::rune_t readNextChar();
-  void skipWhitespace();
-  TokenType parseNumber();
-  TokenType parseIdentifier();
-  TokenType parseSingleCharacterToken();
-  char mLast = 0;
-
-  std::string mCurrentToken;
-  SourceLocation mLocation;
-
-  Utils::Utf8Decoder mDecoder;
-  Utils::ZoneAllocator &mZone;
-};
+} // namespace
 
 std::vector<Token *> Lexer::lex() {
 
@@ -76,7 +54,8 @@ std::vector<Token *> Lexer::lex() {
   TokenType type;
   do {
     type = getNext();
-    std::string_view content = mZone.strdup(mCurrentToken);
+    std::string_view content = std::string_view(
+        mCurrentTokenBegin, mLastPosition - mCurrentTokenBegin);
 
     Token *token = mZone.make<Token>(Token{type, mLocation, content});
     out.push_back(token);
@@ -85,14 +64,19 @@ std::vector<Token *> Lexer::lex() {
   return out;
 }
 
-Utils::rune_t Lexer::readNextChar() { return mDecoder.next(); }
+void Lexer::readNextChar() {
+  mLastPosition = mDecoder.getCurrentPosition();
+  mLast = mDecoder.next();
+}
 
 TokenType Lexer::getNext() {
-  mCurrentToken.clear();
-  if (mLast == 0)
-    mLast = readNextChar();
+  if (mLast == 0) {
+    readNextChar();
+  }
 
   skipWhitespace();
+
+  mCurrentTokenBegin = mLastPosition;
 
   if (mLast == 0) {
     return TokenType::Eof;
@@ -118,8 +102,7 @@ TokenType Lexer::parseSingleCharacterToken() {
         "{}: Lexer error: unknown character '{}'", mLocation, mLast));
   }
 
-  mCurrentToken.push_back(mLast);
-  mLast = readNextChar();
+  readNextChar();
   mLocation.column++;
   return it->token;
 }
@@ -128,11 +111,11 @@ void Lexer::skipWhitespace() {
   while (true) {
     if (mLast == ' ' || mLast == '\t') {
       mLocation.column++;
-      mLast = readNextChar();
+      readNextChar();
     } else if (mLast == '\n') {
       mLocation.column = 0;
       mLocation.line++;
-      mLast = readNextChar();
+      readNextChar();
     } else {
       return;
     }
@@ -141,30 +124,28 @@ void Lexer::skipWhitespace() {
 
 TokenType Lexer::parseNumber() {
   while (isNumber(mLast)) {
-    mCurrentToken.push_back(char(mLast));
     mLocation.column++;
-    mLast = readNextChar();
+    readNextChar();
   }
   return TokenType::LitNumber;
 }
 
 TokenType Lexer::parseIdentifier() {
   while (isIdentifier(mLast)) {
-    mCurrentToken.push_back(char(mLast));
     mLocation.column++;
-    mLast = readNextChar();
+    readNextChar();
   }
 
   // identify reserved words
+  std::string_view currentToken(mCurrentTokenBegin,
+                                mLastPosition - mCurrentTokenBegin);
   auto it = std::find_if(std::begin(RESERVED_WORDS), std::end(RESERVED_WORDS),
-                         [&](auto &rw) { return rw.str == mCurrentToken; });
+                         [&](auto &rw) { return rw.str == currentToken; });
   if (it == std::end(RESERVED_WORDS))
     return TokenType::Identifier;
   else
     return it->token;
 }
-
-} // namespace
 
 std::vector<Token *> lexBuffer(std::string_view buffer,
                                Utils::ZoneAllocator &zone) {
