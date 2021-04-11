@@ -1,8 +1,10 @@
 %token KwPrivate
 %token KwPublic
 %token KwExported
+%token KwExternal
 %token KwFunction
 %token KwReturn
+%token KwModule
 %token LitNumber
 %token LitString
 %token BraceOpen

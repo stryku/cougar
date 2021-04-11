@@ -1,7 +1,7 @@
-add_library(parser_lib   generated/Parser.h
-  generated/Parserbase.h
+add_library(parser_lib   
+  generated/Parser_generated.h
+  generated/Parser_generatedbase.h
   generated/parse.cc
-
   lexer_adaptor.cc lexer_adaptor.hh
 )
 

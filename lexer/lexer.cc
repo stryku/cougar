@@ -34,10 +34,9 @@ struct ReservedWord {
 };
 
 constexpr ReservedWord RESERVED_WORDS[] = {
-    {"return", TokenType::KwReturn},
-    {"function", TokenType::KwFunction},
-    {"private", TokenType::KwPrivate},
-    {"public", TokenType::KwPublic},
+    {"return", TokenType::KwReturn},     {"function", TokenType::KwFunction},
+    {"private", TokenType::KwPrivate},   {"public", TokenType::KwPublic},
+    {"external", TokenType::KwExternal}, {"module", TokenType::KwModule},
 
 };
 

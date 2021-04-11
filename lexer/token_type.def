@@ -2,8 +2,10 @@
 TOKEN(KwPrivate),
 TOKEN(KwPublic),
 TOKEN(KwExported),
+TOKEN(KwExternal),
 TOKEN(KwFunction),
 TOKEN(KwReturn),
+TOKEN(KwModule),
 
 // litereals
 TOKEN(LitNumber),

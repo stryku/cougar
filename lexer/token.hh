@@ -3,7 +3,7 @@
 #include "source_location.hh"
 
 // using bison requires lexer to depend onm parser's tokens
-#include "../parser/generated/Parserbase.h"
+#include "../parser/generated/Parser_generatedbase.h"
 
 #include <fmt/format.h>
 
@@ -12,7 +12,7 @@
 namespace Cougar::Lexer {
 
 // oh, c++ preprocessor, you Turing-complete clusterfuck...
-#define TOKEN(x) x = ::Cougar_generated::ParserBase::Tokens_::x
+#define TOKEN(x) x = ::Cougar_generated::Parser_generatedBase::Tokens_::x
 enum class TokenType {
 #include "token_type.def"
 };
