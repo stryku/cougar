@@ -1,0 +1,16 @@
+%token KwPrivate
+%token KwPublic
+%token KwExported
+%token KwFunction
+%token KwReturn
+%token LitNumber
+%token LitString
+%token BraceOpen
+%token BraceClose
+%token ParentOpen
+%token ParentClose
+%token Semicolon
+%token Operator
+%token Comma
+%token Identifier
+%token Eof

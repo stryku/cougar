@@ -1,9 +1,11 @@
-add_library(parser_lib EXCLUDE_FROM_ALL
-  parser.hh
-  parser.cc
+add_library(parser_lib   generated/Parser.h
+  generated/Parserbase.h
+  generated/parse.cc
+
+  lexer_adaptor.cc lexer_adaptor.hh
 )
 
-add_executable(parser_driver EXCLUDE_FROM_ALL
+add_executable(parser_driver   
   parser_driver.cc
 )
 

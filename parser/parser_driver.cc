@@ -1,9 +1,6 @@
 #include <fmt/core.h>
 
-#include "parser.hh"
-#include "parser_ast/parser_ast.hh"
-
-#include "lexer/input_source.hh"
+#include "generated/Parser.h"
 
 int main(int argc, char **argv) {
   fmt::print("Parser!\n");
@@ -11,11 +8,11 @@ int main(int argc, char **argv) {
   if (argc < 2)
     throw std::runtime_error("Argument missing: file path");
 
-  using namespace Cougar;
+  (void)argv;
 
-  Lexer::InputSource src(argv[1]);
-  Parser::Parser parser;
+  Cougar_generated::Parser parser;
 
-  auto module = parser.parseModule(src);
-  module->dump();
+  parser.setDebug(Cougar_generated::Parser::DebugMode_::ON);
+
+  parser.parse();
 }
