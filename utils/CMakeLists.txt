@@ -2,6 +2,7 @@ add_library(utils_lib
   utf8_decoder.hh utf8_decoder.cc
   zone_allocator.hh zone_allocator.cc
   file_loader.hh file_loader.cc
+  zone_list.hh zone_list.cc
 )
 
 target_include_directories(utils_lib INTERFACE ..)

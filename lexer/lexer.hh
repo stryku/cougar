@@ -3,6 +3,7 @@
 #include "source_location.hh"
 
 #include "utils/utf8_decoder.hh"
+#include "utils/zone_list.hh"
 
 #include <string>
 #include <vector>
@@ -21,7 +22,7 @@ public:
   Lexer(std::string_view buffer, Utils::ZoneAllocator &zone)
       : mDecoder(buffer), mZone(zone) {}
 
-  std::vector<Token *> lex();
+  Utils::ZoneList<Token> lex();
 
 private:
   TokenType getNext();
@@ -44,7 +45,7 @@ private:
 // Processes a input file, places token in memory zone,
 // returns vector of pointers to tokens.
 // Throws on error
-std::vector<Token *> lexBuffer(std::string_view buffer,
-                               Utils::ZoneAllocator &zone);
+Utils::ZoneList<Token> lexBuffer(std::string_view buffer,
+                                 Utils::ZoneAllocator &zone);
 
 } // namespace Cougar::Lexer

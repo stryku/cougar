@@ -48,20 +48,19 @@ bool isIdentifier(char c) { return std::isalnum(c) || c == '_'; }
 
 } // namespace
 
-std::vector<Token *> Lexer::lex() {
+Utils::ZoneList<Token> Lexer::lex() {
 
-  std::vector<Token *> out;
+  Utils::ZoneList<Token> tokens(mZone);
   TokenType type;
   do {
     type = getNext();
     std::string_view content = std::string_view(
         mCurrentTokenBegin, mLastPosition - mCurrentTokenBegin);
 
-    Token *token = mZone.make<Token>(Token{type, mLocation, content});
-    out.push_back(token);
+    tokens.emplace_back(Token{type, mLocation, content});
   } while (type != TokenType::Eof);
 
-  return out;
+  return tokens;
 }
 
 void Lexer::readNextChar() {
@@ -147,8 +146,8 @@ TokenType Lexer::parseIdentifier() {
     return it->token;
 }
 
-std::vector<Token *> lexBuffer(std::string_view buffer,
-                               Utils::ZoneAllocator &zone) {
+Utils::ZoneList<Token> lexBuffer(std::string_view buffer,
+                                 Utils::ZoneAllocator &zone) {
   Lexer lexer(buffer, zone);
   return lexer.lex();
 }

@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
 
   auto tokens = Lexer::lexBuffer(sv, zone);
 
-  for (Lexer::Token *token : tokens) {
-    fmt::print("{}\n", *token);
+  for (const Lexer::Token &token : tokens) {
+    fmt::print("{}\n", token);
   }
 }

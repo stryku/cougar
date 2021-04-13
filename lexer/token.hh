@@ -21,6 +21,7 @@ constexpr std::string_view TOKEN_TYPE_NAMES[] = {
 };
 #undef TOKEN
 
+// Describes a section of the source file, a token.
 class Token {
 public:
   TokenType type;
