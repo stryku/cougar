@@ -21,7 +21,16 @@ public:
 private:
   using TokenIterator = Utils::List<Lexer::Token>::const_iterator;
 
-  // parsing functions
+  // Parsing functions
+  //
+  // The protocol for the parsing functions is as follows:
+  // - see if the tokens under the iterator are what you are supposed to be
+  // parsing
+  // - if not, return false, and leave it unchanged
+  // - if yes, do your best to parse itm modify the AST, leafe the iteratoir at
+  // the token past the end of parsed construct
+  // - throw only on really fatal errors
+
   bool parseModuleDeclaration(Ast::Module *mod, TokenIterator &it);
 
   Utils::ZoneAllocator &mZone;
