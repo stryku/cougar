@@ -48,9 +48,9 @@ bool isIdentifier(char c) { return std::isalnum(c) || c == '_'; }
 
 } // namespace
 
-Utils::ZoneList<Token> Lexer::lex() {
+Utils::List<Token> Lexer::lex() {
 
-  Utils::ZoneList<Token> tokens(mZone);
+  Utils::List<Token> tokens(mZone);
   TokenType type;
   do {
     type = getNext();
@@ -146,8 +146,8 @@ TokenType Lexer::parseIdentifier() {
     return it->token;
 }
 
-Utils::ZoneList<Token> lexBuffer(std::string_view buffer,
-                                 Utils::ZoneAllocator &zone) {
+Utils::List<Token> lexBuffer(std::string_view buffer,
+                             Utils::ZoneAllocator &zone) {
   Lexer lexer(buffer, zone);
   return lexer.lex();
 }

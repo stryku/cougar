@@ -6,32 +6,32 @@
 
 namespace Cougar::Utils {
 
-template <typename NodeT> class ZoneListIterator {
+template <typename NodeT> class ListIterator {
 public:
-  explicit ZoneListIterator(NodeT *n) : mNode(n) {}
+  explicit ListIterator(NodeT *n) : mNode(n) {}
 
   auto &operator*() {
     assert(mNode);
     return mNode->mElement;
   };
 
-  ZoneListIterator &operator++() {
+  ListIterator &operator++() {
     assert(mNode);
     mNode = mNode->mNext;
     return *this;
   }
 
-  bool operator!=(const ZoneListIterator &o) const { return mNode != o.mNode; }
-  bool operator==(const ZoneListIterator &o) const { return mNode == o.mNode; }
+  bool operator!=(const ListIterator &o) const { return mNode != o.mNode; }
+  bool operator==(const ListIterator &o) const { return mNode == o.mNode; }
 
 private:
   NodeT *mNode = nullptr;
 };
 
 /// A linked list linving a zoned allocator
-template <typename T> class ZoneList {
+template <typename T> class List {
 public:
-  ZoneList(ZoneAllocator &zone) : mZone(zone) {}
+  List(ZoneAllocator &zone) : mZone(zone) {}
 
   template <typename... Args> void emplace_back(Args &&...args) {
     ListNode *newNode = mZone.make<ListNode>(std::forward<Args>(args)...);
@@ -43,11 +43,11 @@ public:
     mLast = newNode;
   }
 
-  auto begin() { return ZoneListIterator<ListNode>(mFirst); }
-  auto end() { return ZoneListIterator<ListNode>(nullptr); }
+  auto begin() { return ListIterator<ListNode>(mFirst); }
+  auto end() { return ListIterator<ListNode>(nullptr); }
 
-  auto begin() const { return ZoneListIterator<const ListNode>(mFirst); }
-  auto end() const { return ZoneListIterator<const ListNode>(nullptr); }
+  auto begin() const { return ListIterator<const ListNode>(mFirst); }
+  auto end() const { return ListIterator<const ListNode>(nullptr); }
 
 private:
   struct ListNode {
