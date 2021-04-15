@@ -33,10 +33,12 @@ struct ReservedWord {
   TokenType token;
 };
 
-constexpr ReservedWord RESERVED_WORDS[] = {
-    {"return", TokenType::KwReturn},   {"function", TokenType::KwFunction},
-    {"private", TokenType::KwPrivate}, {"public", TokenType::KwPublic},
-    {"module", TokenType::KwModule},
+constexpr ReservedWord RESERVED_WORDS[] = {{"return", TokenType::KwReturn},
+                                           {"function", TokenType::KwFunction},
+                                           {"private", TokenType::KwPrivate},
+                                           {"public", TokenType::KwPublic},
+                                           {"module", TokenType::KwModule},
+                                           {"extern", TokenType::KwExtern}
 
 };
 

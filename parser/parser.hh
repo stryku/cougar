@@ -26,12 +26,16 @@ private:
   // The protocol for the parsing functions is as follows:
   // - see if the tokens under the iterator are what you are supposed to be
   // parsing
-  // - if not, return false, and leave it unchanged
-  // - if yes, do your best to parse itm modify the AST, leafe the iteratoir at
-  // the token past the end of parsed construct
+  // - if not, return itertator unchanged
+  // - if yes, do your best to parse it, modify the AST, return iterator past
+  // the last statement consumed
   // - throw only on really fatal errors
 
-  bool parseModuleDeclaration(Ast::Module *mod, TokenIterator &it);
+  // parse 'module MyModule;'
+  TokenIterator parseModuleDeclaration(Ast::Module *mod, TokenIterator it);
+
+  // parse module-level function declaration or definition
+  TokenIterator parseModuleFunction(Ast::Module *mod, TokenIterator it);
 
   Utils::ZoneAllocator &mZone;
   Utils::Diagnostics &mDiag;

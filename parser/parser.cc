@@ -1,5 +1,6 @@
 #include "parser.hh"
 
+#include "ast/function.hh"
 #include "ast/module.hh"
 
 namespace Cougar::Parser {
@@ -20,42 +21,47 @@ Module *Parser::parseModule(const List<Lexer::Token> &tokens) {
   auto tokenIt = tokens.begin();
 
   while (tokenIt->type != TokenType::Eof) {
-    if (!(parseModuleDeclaration(mod, tokenIt))) {
-
+    auto it = parseModuleDeclaration(mod, tokenIt);
+    if (it == tokenIt)
+      it = parseModuleFunction(mod, tokenIt);
+    if (it == tokenIt) {
       mDiag.error(tokenIt->location, "Parse error");
       return mod;
     }
+
+    tokenIt = it;
   }
 
   return mod;
 }
 
-bool Parser::parseModuleDeclaration(Ast::Module *mod, TokenIterator &out) {
+Parser::TokenIterator Parser::parseModuleDeclaration(Ast::Module *mod,
+                                                     TokenIterator it) {
 
   assert(mod);
 
-  if (out->type != TokenType::KwModule) {
-    return false;
+  if (it->type != TokenType::KwModule) {
+    return it;
   }
 
   // commited
-  ++out;
-  if (out->type != TokenType::Identifier) {
-    mDiag.error(out->location, "Expected module name");
-    return true;
+  ++it;
+  if (it->type != TokenType::Identifier) {
+    mDiag.error(it->location, "Expected module name");
+    return it;
   }
-  const Token *idToken = &*out;
+  const Token *idToken = &*it;
 
   // check for end of statement
-  ++out;
+  ++it;
 
-  if (out->type != TokenType::Semicolon) {
-    mDiag.error(out->location, "Expected ';' at the end of module declaration");
+  if (it->type != TokenType::Semicolon) {
+    mDiag.error(it->location, "Expected ';' at the end of module declaration");
     // TODO maybe eat tokens untile the next semicolon, to allow for continued
     // parsing
   }
 
-  ++out;
+  ++it;
 
   // check if module has a declaration already
   if (mod->declaration()) {
@@ -65,15 +71,110 @@ bool Parser::parseModuleDeclaration(Ast::Module *mod, TokenIterator &out) {
                   "Originally declared here");
     }
 
-    return true;
+    return it;
   }
 
   // modify AST
   ModuleDeclaration *decl =
       mZone.make<ModuleDeclaration>(idToken->content, idToken);
-  mod->add(mZone, decl);
+  mod->add(decl);
 
-  return true;
+  return it;
+}
+
+Parser::TokenIterator Parser::parseModuleFunction(Ast::Module *mod,
+                                                  TokenIterator it) {
+
+  Access access = Access::Private; // default for module-level functions
+  TokenIterator begin = it;
+
+  // optional access
+  if (it->type == TokenType::KwPrivate) {
+    ++it;
+  } else if (it->type == TokenType::KwPublic) {
+    access = Access::Public;
+    ++it;
+  } else if (it->type == TokenType::KwExtern) {
+    access = Access::External;
+    ++it;
+  }
+
+  // function keyword
+  if (it->type != TokenType::KwFunction)
+    return begin;
+  ++it;
+
+  /// -- commited fro now on --
+
+  // return type
+  if (it->type != TokenType::Identifier) {
+    mDiag.error(it->location, "Expected function return type");
+    return it;
+  }
+  const Token &typeToken = *it;
+  ++it;
+
+  // function name
+  if (it->type != TokenType::Identifier) {
+    mDiag.error(it->location, "Expected function name");
+    return it;
+  }
+
+  Type *t = mZone.make<Ast::Type>(typeToken.content, &typeToken);
+  FunctionDeclaration *fun =
+      mZone.make<FunctionDeclaration>(access, it->content, t, &*it);
+  ++it;
+
+  // args
+  if (it->type != TokenType::ParentOpen) {
+    mDiag.error(it->location, "Expected '(' here");
+    return it;
+  }
+  ++it;
+
+  while (true) {
+
+    // arg type
+    if (it->type != TokenType::Identifier) {
+      mDiag.error(it->location, "Expected argument type");
+      return it;
+    }
+    Type *argType = mZone.make<Ast::Type>(it->content, &*it);
+    std::string_view argName;
+    ++it;
+
+    // maybe arg name
+    if (it->type == TokenType::Identifier) {
+      argName = it->content;
+      ++it;
+    }
+
+    fun->addArg(mZone, argType, argName);
+
+    // comma or closing parent
+    if (it->type == TokenType::Comma) {
+      ++it;
+      continue;
+    }
+
+    if (it->type == TokenType::ParentClose) {
+      ++it;
+      break;
+    }
+
+    mDiag.error(it->location, "Expected ',' or ')' here");
+  }
+
+  mod->add(mZone, fun);
+
+  // not - see if this is function defintion or declaration
+  // TODO
+  if (it->type != TokenType::Semicolon) {
+    mDiag.error(it->location, "Function defintions not impelemented yet :(");
+    return it;
+  }
+  ++it;
+  return it;
 }
 
 } // namespace Cougar::Parser

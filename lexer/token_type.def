@@ -3,7 +3,7 @@
 // keywords
 TOKEN(KwPrivate),
 TOKEN(KwPublic),
-TOKEN(KwExported),
+TOKEN(KwExtern),
 TOKEN(KwFunction),
 TOKEN(KwReturn),
 TOKEN(KwModule),
