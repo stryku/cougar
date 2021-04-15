@@ -35,6 +35,7 @@ private:
 
   const char *mCurrentTokenBegin = nullptr;
   const char *mLastPosition = nullptr;
+  Utils::SourceLocation mTokenBeginLocation;
   Utils::SourceLocation mLocation;
 
   Utils::Utf8Decoder mDecoder;

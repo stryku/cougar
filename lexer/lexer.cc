@@ -50,6 +50,9 @@ bool isIdentifier(char c) { return std::isalnum(c) || c == '_'; }
 
 Utils::List<Token> Lexer::lex() {
 
+  mLocation.column = 1;
+  mLocation.line = 1;
+
   Utils::List<Token> tokens;
   TokenType type;
   do {
@@ -57,7 +60,7 @@ Utils::List<Token> Lexer::lex() {
     std::string_view content = std::string_view(
         mCurrentTokenBegin, mLastPosition - mCurrentTokenBegin);
 
-    tokens.emplace_back(mZone, Token{type, mLocation, content});
+    tokens.emplace_back(mZone, Token{type, mTokenBeginLocation, content});
   } while (type != TokenType::Eof);
 
   return tokens;
@@ -75,6 +78,7 @@ TokenType Lexer::getNext() {
 
   skipWhitespace();
 
+  mTokenBeginLocation = mLocation;
   mCurrentTokenBegin = mLastPosition;
 
   if (mLast == 0) {
@@ -112,7 +116,7 @@ void Lexer::skipWhitespace() {
       mLocation.column++;
       readNextChar();
     } else if (mLast == '\n') {
-      mLocation.column = 0;
+      mLocation.column = 1;
       mLocation.line++;
       readNextChar();
     } else {
