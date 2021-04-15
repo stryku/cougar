@@ -3,6 +3,8 @@ add_library(utils_lib
   zone_allocator.hh zone_allocator.cc
   file_loader.hh file_loader.cc
   list.hh list.cc
+  source_location.hh source_location.cc
+  diagnostics.hh diagnostics.cc
 )
 
 target_include_directories(utils_lib INTERFACE ..)

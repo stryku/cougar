@@ -1,8 +1,11 @@
 #pragma once
 
+#include <fmt/format.h>
+
 #include <cstddef>
 #include <forward_list>
 #include <memory>
+#include <string_view>
 #include <type_traits>
 
 namespace Cougar::Utils {
@@ -37,6 +40,13 @@ public:
 
   // creates a copy of string in the zone, with null terminator added
   std::string_view strdup(std::string_view src);
+
+  // creates a copy of fomratted string int the zone
+  template <typename... Args>
+  std::string_view format(std::string_view fmt, const Args &...args) {
+    std::string s = fmt::format(fmt, args...);
+    return strdup(s);
+  }
 
   // usage info
 

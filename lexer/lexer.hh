@@ -1,8 +1,7 @@
 #pragma once
 
-#include "source_location.hh"
-
 #include "utils/list.hh"
+#include "utils/source_location.hh"
 #include "utils/utf8_decoder.hh"
 
 #include <string>
@@ -36,7 +35,7 @@ private:
 
   const char *mCurrentTokenBegin = nullptr;
   const char *mLastPosition = nullptr;
-  SourceLocation mLocation;
+  Utils::SourceLocation mLocation;
 
   Utils::Utf8Decoder mDecoder;
   Utils::ZoneAllocator &mZone;

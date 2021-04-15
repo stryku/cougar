@@ -5,16 +5,36 @@
 namespace Cougar::Parser {
 
 using namespace Ast;
+using namespace Utils;
 
-Parser::Parser(Utils::ZoneAllocator &zone) : mZone(zone) {}
+using Lexer::Token;
+using Lexer::TokenType;
 
-Module *Parser::parseModule(const Utils::List<Lexer::Token> &tokens) {
+Parser::Parser(Utils::ZoneAllocator &zone, Diagnostics &diag)
+    : mZone(zone), mDiag(diag) {}
+
+Module *Parser::parseModule(const List<Lexer::Token> &tokens) {
 
   Module *mod = mZone.make<Module>();
 
-  (void)tokens;
+  auto tokenIt = tokens.begin();
+
+  while (tokenIt->type != TokenType::Eof) {
+    if (!(parseModuleDeclaration(mod, tokenIt))) {
+
+      mDiag.error(tokenIt->location, "Parse error");
+      return mod;
+    }
+  }
 
   return mod;
+}
+
+bool Parser::parseModuleDeclaration(Ast::Module *mod, TokenIterator &it) {
+  // TODO
+  (void)it;
+  (void)mod;
+  return false;
 }
 
 } // namespace Cougar::Parser

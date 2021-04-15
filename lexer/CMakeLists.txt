@@ -1,7 +1,6 @@
 add_library(lexer_lib EXCLUDE_FROM_ALL
     token.hh token.cc
     lexer.hh lexer.cc
-    source_location.hh source_location.cc
     parsing_trie.cc parsing_trie.hh
 )
 

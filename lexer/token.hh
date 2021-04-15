@@ -1,6 +1,6 @@
 #pragma once
 
-#include "source_location.hh"
+#include "utils/source_location.hh"
 
 #include <fmt/format.h>
 
@@ -25,7 +25,7 @@ constexpr std::string_view TOKEN_TYPE_NAMES[] = {
 class Token {
 public:
   TokenType type;
-  SourceLocation location;
+  Utils::SourceLocation location;
   std::string_view content; // valid only for some
 };
 

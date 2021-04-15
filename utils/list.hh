@@ -15,6 +15,11 @@ public:
     return mNode->mElement;
   };
 
+  auto *operator->() {
+    assert(mNode);
+    return &mNode->mElement;
+  }
+
   ListIterator &operator++() {
     assert(mNode);
     mNode = mNode->mNext;
@@ -30,7 +35,12 @@ private:
 
 /// A linked list linving a zoned allocator
 template <typename T> class List {
+  struct ListNode;
+
 public:
+  using iterator = ListIterator<ListNode>;
+  using const_iterator = ListIterator<const ListNode>;
+
   template <typename... Args>
   void emplace_back(ZoneAllocator &zone, Args &&...args) {
     ListNode *newNode = zone.make<ListNode>(std::forward<Args>(args)...);
@@ -47,6 +57,8 @@ public:
 
   auto begin() const { return ListIterator<const ListNode>(mFirst); }
   auto end() const { return ListIterator<const ListNode>(nullptr); }
+
+  bool empty() const { return mFirst == nullptr; }
 
 private:
   struct ListNode {

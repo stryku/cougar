@@ -37,9 +37,16 @@ int main(int argc, char **argv) {
 
   auto tokens = Lexer::lexBuffer(sv, zone);
 
-  Parser::Parser parser(zone);
+  Utils::Diagnostics diag(zone);
+  diag.setPath(path);
+
+  Parser::Parser parser(zone, diag);
 
   auto module = parser.parseModule(tokens);
 
-  module->dump();
+  diag.print();
+
+  if (!diag.hasErrors()) {
+    module->dump();
+  }
 }
