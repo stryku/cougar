@@ -44,10 +44,22 @@ bool Parser::parseModuleDeclaration(Ast::Module *mod, TokenIterator &out) {
     mDiag.error(out->location, "Expected module name");
     return true;
   }
+  const Token *idToken = &*out;
+
+  // check for end of statement
+  ++out;
+
+  if (out->type != TokenType::Semicolon) {
+    mDiag.error(out->location, "Expected ';' at the end of module declaration");
+    // TODO maybe eat tokens untile the next semicolon, to allow for continued
+    // parsing
+  }
+
+  ++out;
 
   // check if module has a declaration already
   if (mod->declaration()) {
-    mDiag.error(out->location, "Repeated module declaration");
+    mDiag.error(idToken->location, "Repeated module declaration");
     if (mod->declaration()->token()) {
       mDiag.error(mod->declaration()->token()->location,
                   "Originally declared here");
@@ -57,20 +69,9 @@ bool Parser::parseModuleDeclaration(Ast::Module *mod, TokenIterator &out) {
   }
 
   // modify AST
-  ModuleDeclaration *decl = mZone.make<ModuleDeclaration>(out->content, &*out);
+  ModuleDeclaration *decl =
+      mZone.make<ModuleDeclaration>(idToken->content, idToken);
   mod->add(mZone, decl);
-
-  // check for end of statement
-  ++out;
-
-  if (out->type != TokenType::Semicolon) {
-    mDiag.error(out->location, "Expected ';' at the end of module declaration");
-  }
-
-  ++out;
-
-  // TODO maybe eat tokens untile the next semicolon, to allow for continued
-  // parsing
 
   return true;
 }
