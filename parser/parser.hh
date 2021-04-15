@@ -1,38 +1,24 @@
 #pragma once
 
-#include "lexer/lexer.hh"
+#include "utils/list.hh"
+#include "utils/zone_allocator.hh"
 
-#include <fmt/core.h>
+#include "lexer/token.hh"
 
-#include <memory>
-
-namespace Cougar {
-
-namespace ParserAST {
-class INode;
+namespace Cougar::Ast {
 class Module;
-enum class Access;
-} // namespace ParserAST
+}
 
-namespace Parser {
+namespace Cougar::Parser {
 
 class Parser {
 public:
-  std::unique_ptr<ParserAST::Module> parseModule(Lexer::InputSource &input);
+  Parser(Utils::ZoneAllocator &zone);
+
+  Ast::Module *parseModule(const Utils::List<Lexer::Token> &tokens);
 
 private:
-  std::unique_ptr<ParserAST::INode> parseFunction(ParserAST::Access access);
-
-  [[noreturn]] void throwParseError(const std::string &msg);
-
-  template <typename... Ts>
-  [[noreturn]] void throwParseError(const std::string &format,
-                                    const Ts &...args) {
-    throwParseError(fmt::format(format, args...));
-  }
-
-  std::unique_ptr<Lexer::Lexer> mLexer;
+  Utils::ZoneAllocator &mZone;
 };
 
-} // namespace Parser
-} // namespace Cougar
+} // namespace Cougar::Parser

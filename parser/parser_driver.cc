@@ -1,9 +1,14 @@
 #include <fmt/core.h>
 
 #include "parser.hh"
-#include "parser_ast/parser_ast.hh"
 
-#include "lexer/input_source.hh"
+#include "lexer/lexer.hh"
+#include "lexer/token.hh"
+
+#include "ast/module.hh"
+
+#include "utils/file_loader.hh"
+#include "utils/zone_allocator.hh"
 
 int main(int argc, char **argv) {
   fmt::print("Parser!\n");
@@ -13,9 +18,28 @@ int main(int argc, char **argv) {
 
   using namespace Cougar;
 
-  Lexer::InputSource src(argv[1]);
-  Parser::Parser parser;
+  std::string path = argv[1];
+  fmt::print("Parsing file '{}'...\n", path);
 
-  auto module = parser.parseModule(src);
+  using namespace Cougar;
+
+  Utils::FileLoader loader;
+  loader.load(path);
+
+  fmt::print("Loaded {} bytes\n", loader.getSize());
+
+  Utils::ZoneAllocator zone;
+
+  std::byte *buffer = zone.allocateBlock(loader.getSize());
+  loader.copyTo(buffer);
+
+  std::string_view sv((const char *)buffer, loader.getSize());
+
+  auto tokens = Lexer::lexBuffer(sv, zone);
+
+  Parser::Parser parser(zone);
+
+  auto module = parser.parseModule(tokens);
+
   module->dump();
 }

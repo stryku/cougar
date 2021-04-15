@@ -31,10 +31,9 @@ private:
 /// A linked list linving a zoned allocator
 template <typename T> class List {
 public:
-  List(ZoneAllocator &zone) : mZone(zone) {}
-
-  template <typename... Args> void emplace_back(Args &&...args) {
-    ListNode *newNode = mZone.make<ListNode>(std::forward<Args>(args)...);
+  template <typename... Args>
+  void emplace_back(ZoneAllocator &zone, Args &&...args) {
+    ListNode *newNode = zone.make<ListNode>(std::forward<Args>(args)...);
     if (!mFirst) {
       mFirst = newNode;
     } else {
@@ -61,7 +60,6 @@ private:
 
   ListNode *mFirst = nullptr;
   ListNode *mLast = nullptr;
-  ZoneAllocator &mZone;
 };
 
 } // namespace Cougar::Utils
