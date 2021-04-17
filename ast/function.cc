@@ -16,9 +16,8 @@ void FunctionDeclaration::doDump(int indent) const {
   }
 }
 
-void FunctionDeclaration::addArg(Utils::ZoneAllocator &zone, Type *argType,
-                                 std::string_view argName) {
-  mArgs.emplace_back(zone, argType, argName);
+void FunctionDeclaration::addArg(Type *argType, std::string_view argName) {
+  mArgs.emplace_back(argType, argName);
 }
 
 void FunctionArg::doDump(int indent) const {

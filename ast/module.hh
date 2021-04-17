@@ -23,7 +23,7 @@ private:
 class Module : public Node {
 public:
   void add(ModuleDeclaration *decl);
-  void add(Utils::ZoneAllocator &zone, FunctionDeclaration *fun);
+  void add(FunctionDeclaration *fun);
 
   const ModuleDeclaration *declaration() const { return mDeclaration; }
 

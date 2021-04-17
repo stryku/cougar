@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
 
   std::string_view sv((const char *)buffer, loader.getSize());
 
-  auto tokens = Lexer::lexBuffer(sv, zone);
+  auto tokens = Lexer::lexBuffer(sv);
 
   for (const Lexer::Token &token : tokens) {
     fmt::print("{}\n", token);

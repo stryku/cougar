@@ -16,7 +16,7 @@ public:
     std::string_view message;
   };
 
-  Diagnostics(ZoneAllocator &zone) : mZone(zone) {}
+  Diagnostics() = default;
 
   void setPath(std::string_view path) { mPath = path; }
 
@@ -29,7 +29,6 @@ public:
              const Args &...args);
 
 private:
-  ZoneAllocator &mZone;
   std::string_view mPath;
 
   List<Message> mErrors;
@@ -40,9 +39,9 @@ template <typename... Args>
 void Diagnostics::error(const SourceLocation &loc, std::string_view fmt,
                         const Args &...args) {
 
-  std::string_view text = mZone.format(fmt, args...);
+  std::string_view text = Zone::format(fmt, args...);
 
-  mErrors.emplace_back(mZone, Message{loc, mPath, text});
+  mErrors.emplace_back(Message{loc, mPath, text});
 }
 
 } // namespace Cougar::Utils

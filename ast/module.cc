@@ -31,9 +31,9 @@ void Module::add(ModuleDeclaration *decl) {
   mDeclaration = decl;
 }
 
-void Module::add(Utils::ZoneAllocator &zone, FunctionDeclaration *fun) {
+void Module::add(FunctionDeclaration *fun) {
   assert(fun);
-  mFunctions.emplace_back(zone, fun);
+  mFunctions.emplace_back(fun);
 }
 
 } // namespace Cougar::Ast

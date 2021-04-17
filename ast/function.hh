@@ -42,8 +42,7 @@ public:
     assert(returnType);
   }
 
-  void addArg(Utils::ZoneAllocator &zone, Type *argType,
-              std::string_view argName);
+  void addArg(Type *argType, std::string_view argName);
 
 private:
   void doDump(int indent = 0) const override;

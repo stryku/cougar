@@ -18,8 +18,7 @@ enum class TokenType;
 
 class Lexer {
 public:
-  Lexer(std::string_view buffer, Utils::ZoneAllocator &zone)
-      : mDecoder(buffer), mZone(zone) {}
+  Lexer(std::string_view buffer) : mDecoder(buffer) {}
 
   Utils::List<Token> lex();
 
@@ -39,13 +38,11 @@ private:
   Utils::SourceLocation mLocation;
 
   Utils::Utf8Decoder mDecoder;
-  Utils::ZoneAllocator &mZone;
 };
 
 // Processes a input file, places token in memory zone,
 // returns vector of pointers to tokens.
 // Throws on error
-Utils::List<Token> lexBuffer(std::string_view buffer,
-                             Utils::ZoneAllocator &zone);
+Utils::List<Token> lexBuffer(std::string_view buffer);
 
 } // namespace Cougar::Lexer

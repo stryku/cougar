@@ -4,7 +4,17 @@
 
 namespace Cougar::Utils {
 
+thread_local ZoneAllocator *tlCurrentInstance = nullptr;
+
 constexpr std::size_t BLOCK_SIZE = 8000;
+
+ZoneAllocator::ZoneAllocator() {
+
+  mOuterInstance = tlCurrentInstance;
+  tlCurrentInstance = this;
+}
+
+ZoneAllocator::~ZoneAllocator() { tlCurrentInstance = mOuterInstance; }
 
 void *ZoneAllocator::doAllocate(std::size_t size, std::size_t alignment) {
 
@@ -52,5 +62,15 @@ std::string_view ZoneAllocator::strdup(std::string_view src) {
 }
 
 ZoneAllocator::Block::~Block() { std::free(mData); }
+
+namespace Zone {
+
+ZoneAllocator *getInstance() { return tlCurrentInstance; }
+
+std::string_view strdup(std::string_view src) {
+  return tlCurrentInstance->strdup(src);
+}
+
+} // namespace Zone
 
 } // namespace Cougar::Utils

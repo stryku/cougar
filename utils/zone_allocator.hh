@@ -22,7 +22,8 @@ namespace Cougar::Utils {
 // constructuble objects can be allocated.
 class ZoneAllocator {
 public:
-  ZoneAllocator() = default;
+  ZoneAllocator();
+  ~ZoneAllocator();
   ZoneAllocator(const ZoneAllocator &) = delete;
 
   // Create object in allocated space
@@ -71,6 +72,28 @@ private:
   std::forward_list<Block> mBlocks;
   std::size_t mUsed = 0;
   std::size_t mAllocated = 0;
+  ZoneAllocator *mOuterInstance = nullptr;
 };
+
+// singleton access
+namespace Zone {
+
+ZoneAllocator *getInstance();
+
+// Create object in allocated space
+template <typename T, typename... Args> T *make(Args &&...args) {
+  return getInstance()->make<T>(std::forward<Args>(args)...);
+}
+
+std::string_view strdup(std::string_view src);
+
+// creates a copy of fomratted string int the zone
+template <typename... Args>
+std::string_view format(std::string_view fmt, const Args &...args) {
+  std::string s = fmt::format(fmt, args...);
+  return strdup(s);
+}
+
+} // namespace Zone
 
 } // namespace Cougar::Utils

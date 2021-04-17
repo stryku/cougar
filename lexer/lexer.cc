@@ -61,7 +61,7 @@ Utils::List<Token> Lexer::lex() {
     std::string_view content = std::string_view(
         mCurrentTokenBegin, mLastPosition - mCurrentTokenBegin);
 
-    tokens.emplace_back(mZone, Token{type, mTokenBeginLocation, content});
+    tokens.emplace_back(Token{type, mTokenBeginLocation, content});
   } while (type != TokenType::Eof);
 
   return tokens;
@@ -151,9 +151,8 @@ TokenType Lexer::parseIdentifier() {
     return it->token;
 }
 
-Utils::List<Token> lexBuffer(std::string_view buffer,
-                             Utils::ZoneAllocator &zone) {
-  Lexer lexer(buffer, zone);
+Utils::List<Token> lexBuffer(std::string_view buffer) {
+  Lexer lexer(buffer);
   return lexer.lex();
 }
 

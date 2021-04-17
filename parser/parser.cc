@@ -11,12 +11,11 @@ using namespace Utils;
 using Lexer::Token;
 using Lexer::TokenType;
 
-Parser::Parser(Utils::ZoneAllocator &zone, Diagnostics &diag)
-    : mZone(zone), mDiag(diag) {}
+Parser::Parser(Diagnostics &diag) : mDiag(diag) {}
 
 Module *Parser::parseModule(const List<Lexer::Token> &tokens) {
 
-  Module *mod = mZone.make<Module>();
+  Module *mod = Zone::make<Module>();
 
   auto tokenIt = tokens.begin();
 
@@ -76,7 +75,7 @@ Parser::TokenIterator Parser::parseModuleDeclaration(Ast::Module *mod,
 
   // modify AST
   ModuleDeclaration *decl =
-      mZone.make<ModuleDeclaration>(idToken->content, idToken);
+      Zone::make<ModuleDeclaration>(idToken->content, idToken);
   mod->add(decl);
 
   return it;
@@ -120,9 +119,9 @@ Parser::TokenIterator Parser::parseModuleFunction(Ast::Module *mod,
     return it;
   }
 
-  Type *t = mZone.make<Ast::Type>(typeToken.content, &typeToken);
+  Type *t = Zone::make<Ast::Type>(typeToken.content, &typeToken);
   FunctionDeclaration *fun =
-      mZone.make<FunctionDeclaration>(access, it->content, t, &*it);
+      Zone::make<FunctionDeclaration>(access, it->content, t, &*it);
   ++it;
 
   // args
@@ -139,7 +138,7 @@ Parser::TokenIterator Parser::parseModuleFunction(Ast::Module *mod,
       mDiag.error(it->location, "Expected argument type");
       return it;
     }
-    Type *argType = mZone.make<Ast::Type>(it->content, &*it);
+    Type *argType = Zone::make<Ast::Type>(it->content, &*it);
     std::string_view argName;
     ++it;
 
@@ -149,7 +148,7 @@ Parser::TokenIterator Parser::parseModuleFunction(Ast::Module *mod,
       ++it;
     }
 
-    fun->addArg(mZone, argType, argName);
+    fun->addArg(argType, argName);
 
     // comma or closing parent
     if (it->type == TokenType::Comma) {
@@ -165,7 +164,7 @@ Parser::TokenIterator Parser::parseModuleFunction(Ast::Module *mod,
     mDiag.error(it->location, "Expected ',' or ')' here");
   }
 
-  mod->add(mZone, fun);
+  mod->add(fun);
 
   // not - see if this is function defintion or declaration
   // TODO

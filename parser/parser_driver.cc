@@ -35,12 +35,12 @@ int main(int argc, char **argv) {
 
   std::string_view sv((const char *)buffer, loader.getSize());
 
-  auto tokens = Lexer::lexBuffer(sv, zone);
+  auto tokens = Lexer::lexBuffer(sv);
 
-  Utils::Diagnostics diag(zone);
+  Utils::Diagnostics diag;
   diag.setPath(path);
 
-  Parser::Parser parser(zone, diag);
+  Parser::Parser parser(diag);
 
   auto module = parser.parseModule(tokens);
 

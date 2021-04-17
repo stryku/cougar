@@ -41,9 +41,8 @@ public:
   using iterator = ListIterator<ListNode>;
   using const_iterator = ListIterator<const ListNode>;
 
-  template <typename... Args>
-  void emplace_back(ZoneAllocator &zone, Args &&...args) {
-    ListNode *newNode = zone.make<ListNode>(std::forward<Args>(args)...);
+  template <typename... Args> void emplace_back(Args &&...args) {
+    ListNode *newNode = Zone::make<ListNode>(std::forward<Args>(args)...);
     if (!mFirst) {
       mFirst = newNode;
     } else {

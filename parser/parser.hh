@@ -14,7 +14,7 @@ namespace Cougar::Parser {
 
 class Parser {
 public:
-  Parser(Utils::ZoneAllocator &zone, Utils::Diagnostics &diag);
+  Parser(Utils::Diagnostics &diag);
 
   Ast::Module *parseModule(const Utils::List<Lexer::Token> &tokens);
 
@@ -37,7 +37,6 @@ private:
   // parse module-level function declaration or definition
   TokenIterator parseModuleFunction(Ast::Module *mod, TokenIterator it);
 
-  Utils::ZoneAllocator &mZone;
   Utils::Diagnostics &mDiag;
 };
 
