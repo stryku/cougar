@@ -1,4 +1,6 @@
 module hello_world;
 
 
-extern function int32 puts(cstr text, dupa kupa);
+extern function int32 puts(cstr text);
+
+public function int32 main(int32 argc, cstr* argv);

@@ -9,6 +9,7 @@
 namespace Cougar::Ast {
 class Module;
 class FunctionDeclaration;
+class TypeNode;
 enum class Access;
 } // namespace Cougar::Ast
 
@@ -46,6 +47,7 @@ private:
 
   Ast::FunctionDeclaration *parseFunction(TokenIterator &it,
                                           Ast::Access access);
+  Ast::TypeNode *parseType(TokenIterator &it);
 
   Utils::Diagnostics &mDiag;
 };

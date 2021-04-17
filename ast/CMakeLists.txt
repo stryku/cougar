@@ -1,7 +1,8 @@
 add_library(ast_lib
   node.cc node.hh
   module.cc module.hh
-  function.cc function.cc
+  function.cc function.hh
+  type.cc type.hh
 )
 
 target_include_directories(ast_lib INTERFACE ..)

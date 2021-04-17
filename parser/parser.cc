@@ -24,7 +24,8 @@ Module *Parser::parseModule(const List<Lexer::Token> &tokens) {
     if (it == tokenIt)
       it = parseModuleFunction(mod, tokenIt);
     if (it == tokenIt) {
-      mDiag.error(tokenIt->location, "Parse error");
+      mDiag.error(tokenIt->location,
+                  "Parse error, expected: function or module declaration");
       return mod;
     }
 

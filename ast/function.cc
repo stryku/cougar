@@ -1,10 +1,8 @@
 #include "function.hh"
 
-namespace Cougar::Ast {
+#include "type.hh"
 
-void TypeName::doDump(int indent) const {
-  iprint(indent, "TypeName(name={})", mTypeName);
-}
+namespace Cougar::Ast {
 
 void FunctionDeclaration::doDump(int indent) const {
   iprint(indent, "FunctionDeclaration(access={}, name={})", mAccess, mName);
@@ -16,12 +14,12 @@ void FunctionDeclaration::doDump(int indent) const {
   }
 }
 
-void FunctionDeclaration::addArg(TypeName *argType, std::string_view argName) {
+void FunctionDeclaration::addArg(TypeNode *argType, std::string_view argName) {
   mArgs.emplace_back(argType, argName);
 }
 
 void FunctionArg::doDump(int indent) const {
-  iprint(indent, "FunctionArg(type={}, name={})", mType->typeName(), mName);
+  iprint(indent, "FunctionArg(type={}, name={})", mType->name(), mName);
 }
 
 } // namespace Cougar::Ast
