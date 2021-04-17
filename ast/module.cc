@@ -16,11 +16,11 @@ void Module::doDump(int indent) const {
   iprint(indent, "Module(name={})", name);
   if (mDeclaration) {
     iprint(indent + 2, "- declaration:");
-    mDeclaration->dump(indent + 4);
+    mDeclaration->dump(indent + 6);
   }
   iprint(indent + 2, "- functions:");
   for (const FunctionDeclaration *f : mFunctions) {
-    f->dump(indent + 4);
+    f->dump(indent + 6);
   }
 }
 

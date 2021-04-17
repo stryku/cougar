@@ -103,76 +103,11 @@ Parser::TokenIterator Parser::parseModuleFunction(Ast::Module *mod,
     return begin;
   ++it;
 
-  /// -- commited fro now on --
+  /// -- commited from now on --
+  FunctionDeclaration *fun = parseFunction(it, access);
+  if (fun)
+    mod->add(fun);
 
-  // return type
-  if (it->type != TokenType::Identifier) {
-    mDiag.error(it->location, "Expected function return type");
-    return it;
-  }
-  const Token &typeToken = *it;
-  ++it;
-
-  // function name
-  if (it->type != TokenType::Identifier) {
-    mDiag.error(it->location, "Expected function name");
-    return it;
-  }
-
-  Type *t = Zone::make<Ast::Type>(typeToken.content, &typeToken);
-  FunctionDeclaration *fun =
-      Zone::make<FunctionDeclaration>(access, it->content, t, &*it);
-  ++it;
-
-  // args
-  if (it->type != TokenType::ParentOpen) {
-    mDiag.error(it->location, "Expected '(' here");
-    return it;
-  }
-  ++it;
-
-  while (true) {
-
-    // arg type
-    if (it->type != TokenType::Identifier) {
-      mDiag.error(it->location, "Expected argument type");
-      return it;
-    }
-    Type *argType = Zone::make<Ast::Type>(it->content, &*it);
-    std::string_view argName;
-    ++it;
-
-    // maybe arg name
-    if (it->type == TokenType::Identifier) {
-      argName = it->content;
-      ++it;
-    }
-
-    fun->addArg(argType, argName);
-
-    // comma or closing parent
-    if (it->type == TokenType::Comma) {
-      ++it;
-      continue;
-    }
-
-    if (it->type == TokenType::ParentClose) {
-      ++it;
-      break;
-    }
-
-    mDiag.error(it->location, "Expected ',' or ')' here");
-  }
-
-  mod->add(fun);
-
-  // not - see if this is function defintion or declaration
-  // TODO
-  if (it->type != TokenType::Semicolon) {
-    mDiag.error(it->location, "Function defintions not impelemented yet :(");
-    return it;
-  }
-  ++it;
   return it;
 }
 

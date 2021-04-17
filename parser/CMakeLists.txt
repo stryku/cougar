@@ -1,5 +1,6 @@
 add_library(parser_lib
   parser.hh parser.cc
+  parse_function.cc
 )
 
 add_executable(parser_driver

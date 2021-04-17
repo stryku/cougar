@@ -8,7 +8,9 @@
 
 namespace Cougar::Ast {
 class Module;
-}
+class FunctionDeclaration;
+enum class Access;
+} // namespace Cougar::Ast
 
 namespace Cougar::Parser {
 
@@ -36,6 +38,14 @@ private:
 
   // parse module-level function declaration or definition
   TokenIterator parseModuleFunction(Ast::Module *mod, TokenIterator it);
+
+  // Parse helpers
+  //
+  // Employed once commited.
+  // Protocol: return AST object; move iterator past the end
+
+  Ast::FunctionDeclaration *parseFunction(TokenIterator &it,
+                                          Ast::Access access);
 
   Utils::Diagnostics &mDiag;
 };
