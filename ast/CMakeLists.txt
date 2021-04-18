@@ -3,6 +3,8 @@ add_library(ast_lib
   module.cc module.hh
   function.cc function.hh
   type.cc type.hh
+  expression.cc expression.hh
+  statement.cc statement.hh
 )
 
 target_include_directories(ast_lib INTERFACE ..)

@@ -18,6 +18,12 @@ void FunctionDeclaration::addArg(TypeNode *argType, std::string_view argName) {
   mArgs.emplace_back(argType, argName);
 }
 
+void FunctionDeclaration::setBody(Scope *body) {
+  assert(body);
+  if (mBody)
+    throw std::runtime_error("Function alrteady has a body");
+}
+
 void FunctionArg::doDump(int indent) const {
   iprint(indent, "FunctionArg(type={}, name={})", mType->name(), mName);
 }
