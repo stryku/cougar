@@ -47,7 +47,7 @@ bool isNumber(int c) { return std::isdigit(c); }
 
 bool isIdentifierFirst(int c) { return std::isalpha(c) || c == '_'; }
 bool isIdentifier(char c) { return std::isalnum(c) || c == '_'; }
-
+bool isStringLiteralFirst(int c) { return c == '"'; }
 } // namespace
 
 Utils::List<Token> Lexer::lex() {
@@ -56,16 +56,20 @@ Utils::List<Token> Lexer::lex() {
   mLocation.line = 1;
 
   Utils::List<Token> tokens;
-  TokenType type;
+  Token tok;
   do {
-    type = getNext();
-    std::string_view content = std::string_view(
-        mCurrentTokenBegin, mLastPosition - mCurrentTokenBegin);
-
-    tokens.emplace_back(Token{type, mTokenBeginLocation, content});
-  } while (type != TokenType::Eof);
+    tok = getNext();
+    tokens.emplace_back(tok);
+  } while (tok.type != TokenType::Eof);
 
   return tokens;
+}
+
+// Helper. Makes token form cyurrent state
+Token Lexer::makeToken(TokenType type) {
+  std::string_view content =
+      std::string_view(mCurrentTokenBegin, mLastPosition - mCurrentTokenBegin);
+  return Token{type, mTokenBeginLocation, content};
 }
 
 void Lexer::readNextChar() {
@@ -73,7 +77,7 @@ void Lexer::readNextChar() {
   mLast = mDecoder.next();
 }
 
-TokenType Lexer::getNext() {
+Token Lexer::getNext() {
   if (mLast == 0) {
     readNextChar();
   }
@@ -84,7 +88,7 @@ TokenType Lexer::getNext() {
   mCurrentTokenBegin = mLastPosition;
 
   if (mLast == 0) {
-    return TokenType::Eof;
+    return makeToken(TokenType::Eof);
   }
 
   if (isNumber(mLast))
@@ -93,11 +97,14 @@ TokenType Lexer::getNext() {
   if (isIdentifierFirst(mLast))
     return parseIdentifier();
 
+  if (isStringLiteralFirst(mLast))
+    return parseStringLiteral();
+
   // single characters
   return parseSingleCharacterToken();
 }
 
-TokenType Lexer::parseSingleCharacterToken() {
+Token Lexer::parseSingleCharacterToken() {
 
   auto it =
       std::find_if(std::begin(SINGLE_CHAR_TOKENS), std::end(SINGLE_CHAR_TOKENS),
@@ -109,7 +116,7 @@ TokenType Lexer::parseSingleCharacterToken() {
 
   readNextChar();
   mLocation.column++;
-  return it->token;
+  return makeToken(it->token);
 }
 
 void Lexer::skipWhitespace() {
@@ -127,15 +134,15 @@ void Lexer::skipWhitespace() {
   }
 }
 
-TokenType Lexer::parseNumber() {
+Token Lexer::parseNumber() {
   while (isNumber(mLast)) {
     mLocation.column++;
     readNextChar();
   }
-  return TokenType::LitNumber;
+  return makeToken(TokenType::LitNumber);
 }
 
-TokenType Lexer::parseIdentifier() {
+Token Lexer::parseIdentifier() {
   while (isIdentifier(mLast)) {
     mLocation.column++;
     readNextChar();
@@ -147,9 +154,29 @@ TokenType Lexer::parseIdentifier() {
   auto it = std::find_if(std::begin(RESERVED_WORDS), std::end(RESERVED_WORDS),
                          [&](auto &rw) { return rw.str == currentToken; });
   if (it == std::end(RESERVED_WORDS))
-    return TokenType::Identifier;
+    return makeToken(TokenType::Identifier);
   else
-    return it->token;
+    return makeToken(it->token);
+}
+
+Token Lexer::parseStringLiteral() {
+  readNextChar(); // skip opening quote
+  // find content between the quotes
+  // TODO: handle escapes
+  // TODO: join consecutive literals into one
+  // TODO handle raw string/heredoc
+  const char *firstPos = mLastPosition;
+  const char *lastPos = mLastPosition;
+  while (mLast != '"') {
+    if (mLast == 0)
+      throw std::runtime_error(fmt::format(
+          "{}: Lexer error: unerminated string literal", mLocation));
+    readNextChar();
+    lastPos = mLastPosition;
+  }
+  readNextChar(); // skip past the closing quote
+  std::string_view content(firstPos, lastPos - firstPos);
+  return Token{TokenType::LitString, mTokenBeginLocation, content};
 }
 
 Utils::List<Token> lexBuffer(std::string_view buffer) {

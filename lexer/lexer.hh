@@ -23,13 +23,18 @@ public:
   Utils::List<Token> lex();
 
 private:
-  TokenType getNext();
+  Token makeToken(TokenType type);
+
+  Token getNext();
 
   void readNextChar();
   void skipWhitespace();
-  TokenType parseNumber();
-  TokenType parseIdentifier();
-  TokenType parseSingleCharacterToken();
+
+  Token parseNumber();
+  Token parseIdentifier();
+  Token parseSingleCharacterToken();
+  Token parseStringLiteral();
+
   char mLast = 0;
 
   const char *mCurrentTokenBegin = nullptr;
