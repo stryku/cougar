@@ -1,5 +1,6 @@
 #include "function.hh"
 
+#include "statement.hh"
 #include "type.hh"
 
 namespace Cougar::Ast {
@@ -12,6 +13,10 @@ void FunctionDeclaration::doDump(int indent) const {
   for (const FunctionArg &arg : mArgs) {
     arg.dump(indent + 6);
   }
+  if (mBody) {
+    iprint(indent + 2, "- body:");
+    mBody->dump(indent + 6);
+  }
 }
 
 void FunctionDeclaration::addArg(TypeNode *argType, std::string_view argName) {
@@ -22,6 +27,7 @@ void FunctionDeclaration::setBody(Scope *body) {
   assert(body);
   if (mBody)
     throw std::runtime_error("Function alrteady has a body");
+  mBody = body;
 }
 
 void FunctionArg::doDump(int indent) const {

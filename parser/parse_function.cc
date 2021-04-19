@@ -30,8 +30,8 @@ Ast::TypeNode *Parser::parseType(TokenIterator &it) {
   return typeNode;
 }
 
-Ast::FunctionDeclaration *Parser::parseFunction(TokenIterator &it,
-                                                Ast::Access access) {
+Ast::FunctionDeclaration *
+Parser::parseFunction(TokenIterator &it, Ast::Access access, Scope *outer) {
 
   // return type
   Ast::TypeNode *returnType = parseType(it);
@@ -94,13 +94,16 @@ Ast::FunctionDeclaration *Parser::parseFunction(TokenIterator &it,
     mDiag.error(it->location, "Expected ',' or ')' here");
   }
 
-  // not - see if this is function defintion or declaration
-  // TODO
-  if (it->type != TokenType::Semicolon) {
-    mDiag.error(it->location, "Function defintions not impelemented yet :(");
-    return nullptr;
+  // see if this is function defintion or declaration
+  if (it->type == TokenType::BraceOpen) {
+    Scope *scope = parseStatements(it, outer);
+    fun->setBody(scope);
+  } else if (it->type == TokenType::Semicolon) {
+    ++it;
+  } else {
+    mDiag.error(it->location,
+                "Expected ';' at the end of function declaration");
   }
-  ++it;
   return fun;
 }
 

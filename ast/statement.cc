@@ -13,7 +13,7 @@ void Scope::doDump(int indent) const {
 }
 
 void FunctioncCallStatement::doDump(int indent) const {
-  iprint(indent, "FunctionCallStmt(name={}", mFunName);
+  iprint(indent, "FunctionCallStmt(name={})", mFunName);
   if (!mParams->params().empty()) {
     iprint(indent + 2, "- params");
     for (const Expression *e : mParams->params()) {

@@ -1,12 +1,15 @@
 #include "module.hh"
 
 #include "function.hh"
+#include "statement.hh"
 
 namespace Cougar::Ast {
 
 void ModuleDeclaration::doDump(int indent) const {
   iprint(indent, "ModuleDeclaration(name={})", mModuleName);
 }
+
+Module::Module() { mScope = Utils::Zone::make<Scope>(); }
 
 void Module::doDump(int indent) const {
 

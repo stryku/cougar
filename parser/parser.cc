@@ -105,7 +105,7 @@ Parser::TokenIterator Parser::parseModuleFunction(Ast::Module *mod,
   ++it;
 
   /// -- commited from now on --
-  FunctionDeclaration *fun = parseFunction(it, access);
+  FunctionDeclaration *fun = parseFunction(it, access, mod->scope());
   if (fun)
     mod->add(fun);
 

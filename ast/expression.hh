@@ -18,6 +18,7 @@ public:
   const Utils::List<Expression *> &params() const { return mParams; }
 
 private:
+  void doDump(int indent = 0) const override;
   Utils::List<Expression *> mParams;
 };
 
