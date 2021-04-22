@@ -3,7 +3,6 @@
 #include "lexer.hh"
 #include "token.hh"
 
-#include "utils/file_loader.hh"
 #include "utils/zone_allocator.hh"
 
 int main(int argc, char **argv) {
@@ -17,19 +16,8 @@ int main(int argc, char **argv) {
 
   using namespace Cougar;
 
-  Utils::FileLoader loader;
-  loader.load(path);
-
-  fmt::print("Loaded {} bytes\n", loader.getSize());
-
   Utils::ZoneAllocator zone;
-
-  std::byte *buffer = zone.allocateBlock(loader.getSize());
-  loader.copyTo(buffer);
-
-  std::string_view sv((const char *)buffer, loader.getSize());
-
-  auto tokens = Lexer::lexBuffer(sv);
+  auto tokens = Lexer::lexFile(path);
 
   for (const Lexer::Token &token : tokens) {
     fmt::print("{}\n", token);

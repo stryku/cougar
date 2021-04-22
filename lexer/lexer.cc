@@ -2,6 +2,7 @@
 
 #include "token.hh"
 
+#include "utils/file_loader.hh"
 #include "utils/utf8_decoder.hh"
 #include "utils/zone_allocator.hh"
 
@@ -182,6 +183,17 @@ Token Lexer::parseStringLiteral() {
 Utils::List<Token> lexBuffer(std::string_view buffer) {
   Lexer lexer(buffer);
   return lexer.lex();
+}
+
+Utils::List<Token> lexFile(const std::string &path) {
+  Utils::FileLoader loader;
+  loader.load(path);
+  std::byte *buffer = Utils::Zone::allocateBlock(loader.getSize());
+  loader.copyTo(buffer);
+
+  std::string_view sv((const char *)buffer, loader.getSize());
+
+  return lexBuffer(sv);
 }
 
 } // namespace Cougar::Lexer

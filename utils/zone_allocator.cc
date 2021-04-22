@@ -71,6 +71,10 @@ std::string_view strdup(std::string_view src) {
   return tlCurrentInstance->strdup(src);
 }
 
+std::byte *allocateBlock(std::size_t size, std::size_t alignment) {
+  return getInstance()->allocateBlock(size, alignment);
+}
+
 } // namespace Zone
 
 } // namespace Cougar::Utils

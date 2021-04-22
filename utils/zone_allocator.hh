@@ -87,12 +87,14 @@ template <typename T, typename... Args> T *make(Args &&...args) {
 
 std::string_view strdup(std::string_view src);
 
-// creates a copy of fomratted string int the zone
+// creates a copy of formatted string int the zone
 template <typename... Args>
 std::string_view format(std::string_view fmt, const Args &...args) {
   std::string s = fmt::format(fmt, args...);
   return strdup(s);
 }
+
+std::byte *allocateBlock(std::size_t size, std::size_t alignment = 1);
 
 } // namespace Zone
 

@@ -45,9 +45,14 @@ private:
   Utils::Utf8Decoder mDecoder;
 };
 
-// Processes a input file, places token in memory zone,
-// returns vector of pointers to tokens.
+// Processes a input data buffer, places token in memory zone,
+// returns list of pointers to tokens (in the Zone).
 // Throws on error
 Utils::List<Token> lexBuffer(std::string_view buffer);
+
+// Processes a input file, places token in memory zone,
+// returns list of pointers to tokens (in the Zone).
+// Throws on error
+Utils::List<Token> lexFile(const std::string &path);
 
 } // namespace Cougar::Lexer
