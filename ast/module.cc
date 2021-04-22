@@ -5,9 +5,13 @@
 
 namespace Cougar::Ast {
 
+using namespace Utils;
+
 void ModuleDeclaration::doDump(int indent) const {
   iprint(indent, "ModuleDeclaration(name={})", mModuleName);
 }
+
+void ModuleFunction::doDump(int indent) const { mFunction->dump(indent); }
 
 void Module::doDump(int indent) const {
 
@@ -19,22 +23,25 @@ void Module::doDump(int indent) const {
     iprint(indent + 2, "- declaration:");
     mDeclaration->dump(indent + 6);
   }
-  iprint(indent + 2, "- functions:");
-  for (const FunctionDeclaration *f : mFunctions) {
-    f->dump(indent + 6);
+  iprint(indent + 2, "- statements:");
+  for (const ModuleStatement *s : mStatements) {
+    s->dump(indent + 6);
   }
 }
 
 void Module::add(ModuleDeclaration *decl) {
+  assert(decl);
   if (mDeclaration) {
     throw std::runtime_error("Repeated module declaration");
   }
   mDeclaration = decl;
+  mStatements.emplace_back(decl);
 }
 
 void Module::add(FunctionDeclaration *fun) {
   assert(fun);
-  mFunctions.emplace_back(fun);
+  ModuleFunction *mf = Zone::make<ModuleFunction>(fun);
+  mStatements.emplace_back(mf);
 }
 
 } // namespace Cougar::Ast

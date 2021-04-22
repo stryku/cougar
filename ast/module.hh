@@ -5,13 +5,18 @@
 namespace Cougar::Ast {
 
 class FunctionDeclaration;
-class Scope;
 
-class ModuleDeclaration : public NodeOnToken {
+// base class for all module-level statements
+class ModuleStatement : public NodeOnToken {
+public:
+  ModuleStatement(const Lexer::Token *token = nullptr) : NodeOnToken(token) {}
+};
+
+class ModuleDeclaration : public ModuleStatement {
 public:
   ModuleDeclaration(std::string_view moduleName,
                     const Lexer::Token *token = nullptr)
-      : NodeOnToken(token), mModuleName(moduleName) {}
+      : ModuleStatement(token), mModuleName(moduleName) {}
 
   std::string_view moduleName() const { return mModuleName; }
 
@@ -19,6 +24,19 @@ private:
   void doDump(int indent = 0) const override;
 
   std::string_view mModuleName;
+};
+
+class ModuleFunction : public ModuleStatement {
+public:
+  ModuleFunction(FunctionDeclaration *fun, const Lexer::Token *token = nullptr)
+      : ModuleStatement(token), mFunction(fun) {
+    assert(fun);
+  }
+
+private:
+  void doDump(int indent = 0) const override;
+
+  FunctionDeclaration *mFunction = nullptr;
 };
 
 class Module : public Node {
@@ -32,7 +50,7 @@ private:
   void doDump(int indent = 0) const override;
 
   ModuleDeclaration *mDeclaration = nullptr;
-  Utils::List<FunctionDeclaration *> mFunctions;
+  Utils::List<ModuleStatement *> mStatements;
 };
 
 } // namespace Cougar::Ast
