@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <optional>
 #include <vector>
 
 namespace Cougar::Lexer {
