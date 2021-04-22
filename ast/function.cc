@@ -23,10 +23,10 @@ void FunctionDeclaration::addArg(TypeNode *argType, std::string_view argName) {
   mArgs.emplace_back(argType, argName);
 }
 
-void FunctionDeclaration::setBody(Scope *body) {
+void FunctionDeclaration::setBody(StatementGroup *body) {
   assert(body);
   if (mBody)
-    throw std::runtime_error("Function alrteady has a body");
+    throw std::runtime_error("Function already has a body");
   mBody = body;
 }
 

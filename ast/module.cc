@@ -9,8 +9,6 @@ void ModuleDeclaration::doDump(int indent) const {
   iprint(indent, "ModuleDeclaration(name={})", mModuleName);
 }
 
-Module::Module() { mScope = Utils::Zone::make<Scope>(); }
-
 void Module::doDump(int indent) const {
 
   std::string_view name;

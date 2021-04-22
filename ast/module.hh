@@ -23,21 +23,16 @@ private:
 
 class Module : public Node {
 public:
-  Module();
-
   void add(ModuleDeclaration *decl);
   void add(FunctionDeclaration *fun);
 
   const ModuleDeclaration *declaration() const { return mDeclaration; }
-
-  Scope *scope() { return mScope; }
 
 private:
   void doDump(int indent = 0) const override;
 
   ModuleDeclaration *mDeclaration = nullptr;
   Utils::List<FunctionDeclaration *> mFunctions;
-  Scope *mScope;
 };
 
 } // namespace Cougar::Ast

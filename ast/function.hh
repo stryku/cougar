@@ -5,7 +5,7 @@
 namespace Cougar::Ast {
 
 class TypeNode;
-class Scope;
+class StatementGroup;
 
 struct FunctionArg : Node {
 public:
@@ -32,8 +32,8 @@ public:
 
   void addArg(TypeNode *argType, std::string_view argName);
 
-  void setBody(Scope *body);
-  Scope *body() { return mBody; }
+  void setBody(StatementGroup *body);
+  StatementGroup *body() { return mBody; }
 
 private:
   void doDump(int indent = 0) const override;
@@ -41,7 +41,7 @@ private:
   Access mAccess;
   std::string_view mName;
   TypeNode *mReturnType;
-  Scope *mBody;
+  StatementGroup *mBody;
 
   Utils::List<FunctionArg> mArgs;
 };

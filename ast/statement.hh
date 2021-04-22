@@ -11,10 +11,8 @@ public:
   Statement(const Lexer::Token *tok = nullptr) : NodeOnToken(tok) {}
 };
 
-class Scope : public Statement {
+class StatementGroup : public Statement {
 public:
-  Scope(Scope *parent = nullptr) : mParent(parent) {}
-
   void addStatement(Statement *stm) { mStatements.emplace_back(stm); }
 
   Utils::List<Statement *> &statements() { return mStatements; }
@@ -22,7 +20,6 @@ public:
 private:
   void doDump(int indent = 0) const override;
 
-  Scope *mParent = nullptr;
   Utils::List<Statement *> mStatements;
 };
 

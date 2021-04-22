@@ -10,17 +10,17 @@ using namespace Utils;
 using Lexer::Token;
 using Lexer::TokenType;
 
-Ast::Scope *Parser::parseStatements(TokenIterator &it, Scope *outer) {
+Ast::StatementGroup *Parser::parseStatements(TokenIterator &it) {
 
-  Scope *scope = Zone::make<Scope>(outer);
+  StatementGroup *group = Zone::make<StatementGroup>();
   TokenIterator scopeBegin = it;
   if (it->type != TokenType::BraceOpen) {
     // single statement
-    Statement *s = parseStatement(it, scope);
+    Statement *s = parseStatement(it);
     if (s) {
-      scope->addStatement(s);
+      group->addStatement(s);
     }
-    return scope;
+    return group;
   }
 
   // parse until closing bracket
@@ -29,23 +29,21 @@ Ast::Scope *Parser::parseStatements(TokenIterator &it, Scope *outer) {
     if (it->type == TokenType::Eof) {
       mDiag.error(it->location, "Missing closing bracket at the end of input");
       mDiag.error(scopeBegin->location, "Opening brakcet is here");
-      return scope;
+      return group;
     }
 
-    Statement *stmt = parseStatement(it, scope);
+    Statement *stmt = parseStatement(it);
     if (!stmt) {
       mDiag.error(it->location, "Parse error");
       return nullptr;
     }
-    scope->addStatement(stmt);
+    group->addStatement(stmt);
   }
   ++it;
-  return scope;
+  return group;
 }
 
-Statement *Parser::parseStatement(TokenIterator &it, Scope *scope) {
-
-  (void)scope;
+Statement *Parser::parseStatement(TokenIterator &it) {
 
   FunctioncCallStatement *fc = parseFunctionCall(it);
 

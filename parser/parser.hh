@@ -11,8 +11,8 @@ class Module;
 class FunctionDeclaration;
 class TypeNode;
 enum class Access;
-class Scope;
 class Statement;
+class StatementGroup;
 class FunctioncCallStatement;
 class ParamPack;
 class Expression;
@@ -50,12 +50,12 @@ private:
   // Employed once commited.
   // Protocol: return AST object; move iterator past the end
 
-  Ast::FunctionDeclaration *parseFunction(TokenIterator &it, Ast::Access access,
-                                          Ast::Scope *outer);
+  Ast::FunctionDeclaration *parseFunction(TokenIterator &it,
+                                          Ast::Access access);
   Ast::TypeNode *parseType(TokenIterator &it);
 
-  Ast::Scope *parseStatements(TokenIterator &it, Ast::Scope *outer);
-  Ast::Statement *parseStatement(TokenIterator &it, Ast::Scope *scope);
+  Ast::StatementGroup *parseStatements(TokenIterator &it);
+  Ast::Statement *parseStatement(TokenIterator &it);
   Ast::FunctioncCallStatement *parseFunctionCall(TokenIterator &it);
   Ast::ParamPack *parseParamPack(TokenIterator &it);
   Ast::Expression *parseExpression(TokenIterator &it);

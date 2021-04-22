@@ -30,8 +30,8 @@ Ast::TypeNode *Parser::parseType(TokenIterator &it) {
   return typeNode;
 }
 
-Ast::FunctionDeclaration *
-Parser::parseFunction(TokenIterator &it, Ast::Access access, Scope *outer) {
+Ast::FunctionDeclaration *Parser::parseFunction(TokenIterator &it,
+                                                Ast::Access access) {
 
   // return type
   Ast::TypeNode *returnType = parseType(it);
@@ -96,8 +96,8 @@ Parser::parseFunction(TokenIterator &it, Ast::Access access, Scope *outer) {
 
   // see if this is function defintion or declaration
   if (it->type == TokenType::BraceOpen) {
-    Scope *scope = parseStatements(it, outer);
-    fun->setBody(scope);
+    StatementGroup *body = parseStatements(it);
+    fun->setBody(body);
   } else if (it->type == TokenType::Semicolon) {
     ++it;
   } else {
