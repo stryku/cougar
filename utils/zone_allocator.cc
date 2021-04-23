@@ -1,5 +1,6 @@
 #include "zone_allocator.hh"
 
+#include <cassert>
 #include <cstring>
 
 namespace Cougar::Utils {
@@ -65,14 +66,19 @@ ZoneAllocator::Block::~Block() { std::free(mData); }
 
 namespace Zone {
 
-ZoneAllocator *getInstance() { return tlCurrentInstance; }
+ZoneAllocator *getInstance() {
+  assert(tlCurrentInstance);
+  return tlCurrentInstance;
+}
 
 std::string_view strdup(std::string_view src) {
+  assert(tlCurrentInstance);
   return tlCurrentInstance->strdup(src);
 }
 
 std::byte *allocateBlock(std::size_t size, std::size_t alignment) {
-  return getInstance()->allocateBlock(size, alignment);
+  assert(tlCurrentInstance);
+  return tlCurrentInstance->allocateBlock(size, alignment);
 }
 
 } // namespace Zone
