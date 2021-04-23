@@ -1,6 +1,8 @@
 #include <fmt/core.h>
 
-#include "parser.hh"
+#include "parser/parser.hh"
+
+#include "resolver.hh"
 
 #include "lexer/lexer.hh"
 #include "lexer/token.hh"
@@ -11,13 +13,13 @@
 #include "utils/zone_allocator.hh"
 
 int main(int argc, char **argv) {
-  fmt::print("Parser!\n");
+  fmt::print("Resolver!\n");
 
   if (argc < 2)
     throw std::runtime_error("Argument missing: file path");
 
   std::string path = argv[1];
-  fmt::print("Parsing file '{}'...\n", path);
+  fmt::print("Resolving file '{}'...\n", path);
 
   using namespace Cougar;
 
@@ -32,9 +34,14 @@ int main(int argc, char **argv) {
 
   auto module = parser.parseModule(tokens);
 
+  Resolver::Resolver resolver(diag);
+
+  if (module)
+    resolver.resolveModule(module);
+
   diag.print();
 
-  if (!diag.hasErrors()) {
+  if (module) {
     module->dump();
   }
 }
