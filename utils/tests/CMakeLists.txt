@@ -1,6 +1,7 @@
 add_executable(utils_tests
   utf8_decoder_tests.cc
   zone_allocator_tests.cc
+  map_tests.cc
 )
 
 target_link_libraries(utils_tests PRIVATE utils_lib)
