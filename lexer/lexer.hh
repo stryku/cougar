@@ -35,7 +35,7 @@ private:
   Token parseSingleCharacterToken();
   Token parseStringLiteral();
 
-  char mLast = 0;
+  Utils::rune_t mLast = 0;
 
   const char *mCurrentTokenBegin = nullptr;
   const char *mLastPosition = nullptr;
