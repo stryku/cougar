@@ -14,6 +14,8 @@
 
 namespace Cougar::Lexer {
 
+using namespace std::string_view_literals;
+
 namespace {
 
 struct SingleCharToken {
@@ -31,7 +33,7 @@ constexpr SingleCharToken SINGLE_CHAR_TOKENS[] = {
 };
 
 struct ReservedWord {
-  const char *str;
+  std::string_view str;
   TokenType token;
 };
 
