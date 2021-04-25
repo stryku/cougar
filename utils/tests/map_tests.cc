@@ -58,4 +58,28 @@ TEST(MapTests, Find) {
   EXPECT_FALSE(p5);
 }
 
+TEST(MapTests, HeterogenousTypes) {
+
+  struct Base {
+    Base(int a) : mA(a){};
+    virtual int value() const { return mA; }
+    int mA;
+  };
+
+  struct Derived : Base {
+    Derived(int a, int b) : Base(a), mB(b) {}
+    int value() const override { return mA + mB; }
+    int mB;
+  };
+
+  ZoneAllocator zone;
+  Map<std::string_view, Base> map;
+
+  map.emplace("base", 42);
+  map.emplace<Derived>("derived", 13, 7);
+
+  EXPECT_EQ(42, map.find("base")->value());
+  EXPECT_EQ(13 + 7, map.find("derived")->value());
+}
+
 } // namespace Cougar::Utils::Tests

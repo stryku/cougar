@@ -4,19 +4,21 @@
 
 namespace Cougar::Utils {
 
-template <typename KeyT, typename ValueT> class Map {
+template <typename KeyT, typename BaseValueT> class Map {
 
-  struct TreeNode {
+  template <typename ValueT> struct TreeNode {
 
     template <typename... Args>
     TreeNode(const KeyT &key, Args &&...valueConstructorArgs)
         : mKey(key), mValue(std::forward<Args>(valueConstructorArgs)...) {}
 
     KeyT mKey;
-    ValueT mValue;
     TreeNode *mLeft = nullptr;
     TreeNode *mRight = nullptr;
+    ValueT mValue;
   };
+
+  using BaseTreeNode = TreeNode<BaseValueT>;
 
 public:
   // TODO: maybe return this instead of throwing?
@@ -28,40 +30,52 @@ public:
   // Returns pointer to created element.
   // Throws if element byu that key already exists
   template <typename KeyCompatT, typename... Args>
-  ValueT *emplace(const KeyCompatT &key, Args &&...valueConstructorArgs) {
-    return doEmplace(mRoot, key, std::forward<Args>(valueConstructorArgs)...);
+  BaseValueT *emplace(const KeyCompatT &key, Args &&...valueConstructorArgs) {
+    return doEmplace<BaseValueT>(mRoot, key,
+                                 std::forward<Args>(valueConstructorArgs)...);
+  }
+
+  template <typename ExtendedValueT, typename KeyCompatT, typename... Args>
+  ExtendedValueT *emplace(const KeyCompatT &key,
+                          Args &&...valueConstructorArgs) {
+    static_assert(std::is_base_of_v<BaseValueT, ExtendedValueT>,
+                  "emplaced type must be derived from base value type");
+
+    return doEmplace<ExtendedValueT>(
+        mRoot, key, std::forward<Args>(valueConstructorArgs)...);
   }
 
   // Returns pointer to found value, or null if not found
-  template <typename KeyCompatT> ValueT *find(const KeyCompatT &key) {
+  template <typename KeyCompatT> BaseValueT *find(const KeyCompatT &key) {
     return doFind(mRoot, key);
   }
 
 private:
-  template <typename KeyCompatT, typename... Args>
-  ValueT *doEmplace(TreeNode *&parent, const KeyCompatT &key,
+  template <typename ValueT, typename KeyCompatT, typename... Args>
+  ValueT *doEmplace(BaseTreeNode *&parent, const KeyCompatT &key,
                     Args &&...valueConstructorArgs) {
     if (parent == nullptr) {
       // here we go
-      parent = Zone::make<TreeNode>(
+      TreeNode<ValueT> *node = Zone::make<TreeNode<ValueT>>(
           key, std::forward<Args>(valueConstructorArgs)...);
-      return &parent->mValue;
+      parent = reinterpret_cast<BaseTreeNode *>(node);
+      return &node->mValue;
     }
 
     if (key < parent->mKey)
-      return doEmplace(parent->mLeft, key,
-                       std::forward<Args>(valueConstructorArgs)...);
+      return doEmplace<ValueT>(parent->mLeft, key,
+                               std::forward<Args>(valueConstructorArgs)...);
 
     if (parent->mKey < key) {
-      return doEmplace(parent->mRight, key,
-                       std::forward<Args>(valueConstructorArgs)...);
+      return doEmplace<ValueT>(parent->mRight, key,
+                               std::forward<Args>(valueConstructorArgs)...);
     }
 
     throw std::runtime_error("Map: key already exists");
   }
 
   template <typename KeyCompatT>
-  ValueT *doFind(TreeNode *node, const KeyCompatT &key) {
+  BaseValueT *doFind(BaseTreeNode *node, const KeyCompatT &key) {
     if (!node)
       return nullptr;
 
@@ -74,7 +88,7 @@ private:
     return &node->mValue;
   }
 
-  TreeNode *mRoot = nullptr;
+  BaseTreeNode *mRoot = nullptr;
 };
 
 } // namespace Cougar::Utils
