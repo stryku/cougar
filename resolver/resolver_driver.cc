@@ -9,6 +9,9 @@
 
 #include "ast/module.hh"
 
+#include "meta/built_in.hh"
+#include "meta/scope.hh"
+
 #include "utils/file_loader.hh"
 #include "utils/zone_allocator.hh"
 
@@ -34,7 +37,11 @@ int main(int argc, char **argv) {
 
   auto module = parser.parseModule(tokens);
 
-  Resolver::Resolver resolver(diag);
+  Resolver::CompilationState compilationState;
+  compilationState.mBuildInScope = Meta::createBuiltInScope();
+  compilationState.mRootScope = Utils::Zone::make<Meta::Scope>("", nullptr);
+
+  Resolver::Resolver resolver(diag, compilationState);
 
   if (module)
     resolver.resolveModule(module);
@@ -42,6 +49,13 @@ int main(int argc, char **argv) {
   diag.print();
 
   if (module) {
+    fmt::print("\n==== MODULE AST  ====\n");
     module->dump();
   }
+
+  fmt::print("\n==== BUILT-IN SCOPE  ====\n");
+  compilationState.mBuildInScope->dump();
+
+  fmt::print("\n==== COMPILED SCOPE  ====\n");
+  compilationState.mRootScope->dump();
 }

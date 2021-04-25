@@ -2,7 +2,8 @@
 
 namespace Cougar::Resolver {
 
-Resolver::Resolver(Utils::Diagnostics &diag) : mDiag(diag) {}
+Resolver::Resolver(Utils::Diagnostics &diag, CompilationState &state)
+    : mDiag(diag), mState(state) {}
 
 void Resolver::resolveModule(Ast::Module *module) {
   // TODO

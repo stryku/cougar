@@ -9,6 +9,6 @@ add_executable(resolver_driver
 target_include_directories(resolver_lib INTERFACE ..)
 
 target_link_libraries(resolver_lib PRIVATE ast_lib)
-target_link_libraries(resolver_lib PRIVATE lexer_lib)
+target_link_libraries(resolver_lib PRIVATE meta_lib)
 
 target_link_libraries(resolver_driver PRIVATE resolver_lib parser_lib lexer_lib)

@@ -6,6 +6,7 @@ add_library(utils_lib
   source_location.hh source_location.cc
   diagnostics.hh diagnostics.cc
   map.hh map.cc
+  iprint.hh iprint.cc
 )
 
 target_include_directories(utils_lib INTERFACE ..)

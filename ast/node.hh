@@ -2,10 +2,12 @@
 
 #include "lexer/token.hh"
 
+#include "utils/iprint.hh"
 #include "utils/list.hh"
 
 namespace Cougar::Ast {
 
+// TODO remove this base class, it is not needed
 class Node {
 public:
   void dump(int indent = 0) const { doDump(indent); }
@@ -23,14 +25,7 @@ private:
   const Lexer::Token *mToken;
 };
 
-// dump helper: prints line with indentation
-template <typename... Args>
-void iprint(int indent, std::string_view fmt, const Args &...args) {
-  if (indent > 0)
-    fmt::print("{:{}}", " ", indent);
-  fmt::print(fmt, args...);
-  fmt::print("\n");
-}
+using Utils::iprint;
 
 enum class Access { Public, Private, External };
 
