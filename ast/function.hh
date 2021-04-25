@@ -36,6 +36,8 @@ public:
   StatementGroup *body() { return mBody; }
   TypeNode *returnType() { return mReturnType; }
 
+  std::string_view name() const { return mName; }
+
 private:
   void doDump(int indent = 0) const override;
 

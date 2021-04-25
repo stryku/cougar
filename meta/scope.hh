@@ -2,6 +2,7 @@
 
 #include <string_view>
 
+#include "function_info.hh"
 #include "type_info.hh"
 
 #include "utils/map.hh"
@@ -23,12 +24,21 @@ public:
 
   Scope *parent() { return mParent; }
 
+  // FunctionInfo *addFunction(std::string_view name) {
+  //   mFunctions.emplace(name, name);
+  // }
+
+  FunctionInfo *findFunction(std::string_view name) {
+    return mFunctions.find(name);
+  }
+
 private:
   std::string_view mName;
   Scope *mParent = nullptr;
   bool mIsBuiltIn = false;
 
   Utils::Map<std::string_view, TypeInfo> mTypes;
+  Utils::Map<std::string_view, FunctionInfo> mFunctions;
 };
 
 } // namespace Cougar::Meta
