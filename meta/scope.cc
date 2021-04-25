@@ -13,6 +13,8 @@ void Scope::dump(int indent) const {
   } else {
     iprint(indent, "Scope ({})", mName);
   }
+
+  iprint(indent + 2, "- type");
 }
 
 } // namespace Cougar::Meta

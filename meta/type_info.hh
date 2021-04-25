@@ -10,6 +10,8 @@ class TypeInfo {
 public:
   TypeInfo(std::string_view name) : mName(name) {}
 
+  void dump(int indent) const;
+
 private:
   std::string_view mName;
   Scope *mScope = nullptr;
