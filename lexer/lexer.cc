@@ -14,10 +14,12 @@
 
 namespace Cougar::Lexer {
 
+using namespace std::string_view_literals;
+
 namespace {
 
 struct SingleCharToken {
-  char chr;
+  Utils::rune_t chr;
   TokenType token;
 };
 
@@ -31,7 +33,7 @@ constexpr SingleCharToken SINGLE_CHAR_TOKENS[] = {
 };
 
 struct ReservedWord {
-  const char *str;
+  std::string_view str;
   TokenType token;
 };
 
@@ -44,11 +46,11 @@ constexpr ReservedWord RESERVED_WORDS[] = {{"return", TokenType::KwReturn},
 
 };
 
-bool isNumber(int c) { return std::isdigit(c); }
+bool isNumber(Utils::rune_t c) { return std::isdigit(c); }
 
-bool isIdentifierFirst(int c) { return std::isalpha(c) || c == '_'; }
-bool isIdentifier(char c) { return std::isalnum(c) || c == '_'; }
-bool isStringLiteralFirst(int c) { return c == '"'; }
+bool isIdentifierFirst(Utils::rune_t c) { return std::isalpha(c) || c == '_'; }
+bool isIdentifier(Utils::rune_t c) { return std::isalnum(c) || c == '_'; }
+bool isStringLiteralFirst(Utils::rune_t c) { return c == '"'; }
 } // namespace
 
 Utils::List<Token> Lexer::lex() {
