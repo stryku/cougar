@@ -29,9 +29,6 @@ public:
   void resolveModule(Ast::Module *module);
 
 private:
-  friend class ModuleVisitor;
-  friend class TypeVisitor;
-
   void resolveFunctionDelcaration(Ast::FunctionDeclaration *,
                                   Meta::Scope *scope);
 

@@ -11,8 +11,6 @@ void ModuleDeclaration::doDump(int indent) const {
   iprint(indent, "ModuleDeclaration(name={})", mModuleName);
 }
 
-void ModuleFunction::doDump(int indent) const { mFunction->dump(indent); }
-
 void Module::doDump(int indent) const {
 
   std::string_view name;
@@ -24,8 +22,8 @@ void Module::doDump(int indent) const {
     mDeclaration->dump(indent + 6);
   }
   iprint(indent + 2, "- statements:");
-  for (const ModuleStatement *s : mStatements) {
-    s->dump(indent + 6);
+  for (const ModuleStatement &s : mStatements) {
+    s.dump(indent + 6);
   }
 }
 
@@ -40,8 +38,11 @@ void Module::add(ModuleDeclaration *decl) {
 
 void Module::add(FunctionDeclaration *fun) {
   assert(fun);
-  ModuleFunction *mf = Zone::make<ModuleFunction>(fun);
-  mStatements.emplace_back(mf);
+  mStatements.emplace_back(fun);
+}
+
+void ModuleStatement::dump(int indent) const {
+  std::visit([&](const Node *n) { n->dump(indent); }, mData);
 }
 
 } // namespace Cougar::Ast

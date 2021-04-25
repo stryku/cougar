@@ -4,6 +4,7 @@
 
 #include "meta/scope.hh"
 
+#include "utils/overloaded.hh"
 #include "utils/zone_allocator.hh"
 
 #include <cassert>
@@ -13,16 +14,6 @@ namespace Cougar::Resolver {
 using namespace Ast;
 using namespace Meta;
 using namespace Utils;
-
-class ModuleVisitor : public IModuleStatementVisitor {
-public:
-  void on(ModuleFunction *fun) override {
-    mResolver->resolveFunctionDelcaration(fun->function(), mScope);
-  }
-
-  Resolver *mResolver;
-  Scope *mScope;
-};
 
 Resolver::Resolver(Utils::Diagnostics &diag, CompilationState &state)
     : mDiag(diag), mState(state) {}
@@ -41,13 +32,14 @@ void Resolver::resolveModule(Module *module) {
   }
   // else use root scope
 
-  // Preparte visitor
-  ModuleVisitor vtor;
-  vtor.mResolver = this;
-  vtor.mScope = scope;
-
-  for (ModuleStatement *md : module->statements()) {
-    md->visit(vtor);
+  // Resolve function declarations
+  for (ModuleStatement &md : module->statements()) {
+    md.visit(overloaded //
+             {          //
+              [&](FunctionDeclaration *fun) {
+                resolveFunctionDelcaration(fun, scope);
+              },
+              [](auto &) {}});
   }
 }
 

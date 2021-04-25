@@ -2,56 +2,38 @@
 
 #include "node.hh"
 
+#include <variant>
+
 namespace Cougar::Ast {
 
 class FunctionDeclaration;
-
-// module-level object visitor
 class ModuleDeclaration;
-class ModuleFunction;
-class IModuleStatementVisitor {
-public:
-  virtual void on(ModuleDeclaration *){};
-  virtual void on(ModuleFunction *){};
-};
 
 // base class for all module-level statements
-class ModuleStatement : public NodeOnToken {
+class ModuleStatement {
 public:
-  ModuleStatement(const Lexer::Token *token = nullptr) : NodeOnToken(token) {}
+  ModuleStatement(FunctionDeclaration *f) : mData(f) {}
+  ModuleStatement(ModuleDeclaration *m) : mData(m) {}
 
-  virtual void visit(IModuleStatementVisitor &) = 0;
+  template <typename F> auto visit(F f) { return std::visit(f, mData); }
+
+  void dump(int indent = 0) const;
+
+private:
+  std::variant<FunctionDeclaration *, ModuleDeclaration *> mData;
 };
 
-class ModuleDeclaration : public ModuleStatement {
+class ModuleDeclaration : public NodeOnToken {
 public:
   ModuleDeclaration(std::string_view moduleName,
                     const Lexer::Token *token = nullptr)
-      : ModuleStatement(token), mModuleName(moduleName) {}
+      : NodeOnToken(token), mModuleName(moduleName) {}
 
   std::string_view moduleName() const { return mModuleName; }
 
-  void visit(IModuleStatementVisitor &v) override { v.on(this); }
-
 private:
   void doDump(int indent = 0) const override;
-
   std::string_view mModuleName;
-};
-
-class ModuleFunction : public ModuleStatement {
-public:
-  ModuleFunction(FunctionDeclaration *fun, const Lexer::Token *token = nullptr)
-      : ModuleStatement(token), mFunction(fun) {
-    assert(fun);
-  }
-  void visit(IModuleStatementVisitor &v) override { v.on(this); }
-  FunctionDeclaration *function() { return mFunction; }
-
-private:
-  void doDump(int indent = 0) const override;
-
-  FunctionDeclaration *mFunction = nullptr;
 };
 
 class Module : public Node {
@@ -61,7 +43,7 @@ public:
 
   const ModuleDeclaration *declaration() const { return mDeclaration; }
 
-  Utils::ListView<ModuleStatement *> statements() { return mStatements; }
+  Utils::ListView<ModuleStatement> statements() { return mStatements; }
 
   std::string_view moduleName() const {
     if (mDeclaration)
@@ -74,7 +56,7 @@ private:
   void doDump(int indent = 0) const override;
 
   ModuleDeclaration *mDeclaration = nullptr;
-  Utils::List<ModuleStatement *> mStatements;
+  Utils::List<ModuleStatement> mStatements;
 };
 
 } // namespace Cougar::Ast
