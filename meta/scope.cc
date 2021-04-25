@@ -15,6 +15,8 @@ void Scope::dump(int indent) const {
   }
 
   iprint(indent + 2, "- type");
+  mTypes.for_each(
+      [&](const auto &, const TypeInfo &ti) { ti.dump(indent + 6); });
 }
 
 } // namespace Cougar::Meta

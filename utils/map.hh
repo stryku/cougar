@@ -2,6 +2,8 @@
 
 #include "zone_allocator.hh"
 
+#include <cassert>
+
 namespace Cougar::Utils {
 
 template <typename KeyT, typename BaseValueT> class Map {
