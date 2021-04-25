@@ -36,7 +36,6 @@ private:
                                   Meta::Scope *scope);
 
   Meta::TypeInfo *resolveType(Ast::TypeNode *tn, Meta::Scope *scope);
-  Meta::TypeInfo *resolveTypeName(Ast::TypeName *tn, Meta::Scope *scope);
 
   Utils::Diagnostics &mDiag;
   CompilationState &mState;

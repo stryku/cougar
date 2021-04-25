@@ -20,7 +20,7 @@ TOKEN(ParentClose),
 TOKEN(Semicolon),
 TOKEN(Operator),
 TOKEN(Comma),
-TOKEN(Asterix),
+TOKEN(Asterisk),
 
 // other
 TOKEN(Identifier),

@@ -18,12 +18,12 @@ Ast::TypeNode *Parser::parseType(TokenIterator &it) {
     return nullptr;
   }
 
-  TypeNode *typeNode = Zone::make<TypeName>(it->content, &*it);
+  TypeNode *typeNode = Zone::make<TypeNode>(it->content, &*it);
   ++it;
 
   // maybe pointer
-  while (it->type == TokenType::Asterix) {
-    typeNode = Zone::make<PointerTo>(typeNode, &*it);
+  while (it->type == TokenType::Asterisk) {
+    typeNode = Zone::make<TypeNode>(typeNode, &*it);
     ++it;
   }
 

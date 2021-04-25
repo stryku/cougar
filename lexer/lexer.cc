@@ -28,7 +28,7 @@ constexpr SingleCharToken SINGLE_CHAR_TOKENS[] = {
     {'{', TokenType::BraceOpen},  {'}', TokenType::BraceClose},
     {'(', TokenType::ParentOpen}, {')', TokenType::ParentClose},
     {'<', TokenType::Operator},   {'>', TokenType::Operator},
-    {'*', TokenType::Asterix},
+    {'*', TokenType::Asterisk},
 
 };
 
