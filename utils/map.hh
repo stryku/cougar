@@ -50,6 +50,12 @@ public:
     return doFind(mRoot, key);
   }
 
+  // Visits elements in-order
+  template <typename F> void for_each(F f) const {
+    if (mRoot)
+      visit(mRoot, f);
+  }
+
 private:
   template <typename ValueT, typename KeyCompatT, typename... Args>
   ValueT *doEmplace(BaseTreeNode *&parent, const KeyCompatT &key,
@@ -86,6 +92,20 @@ private:
       return doFind(node->mRight, key);
 
     return &node->mValue;
+  }
+
+  template <typename F> void visit(BaseTreeNode *node, F f) const {
+    assert(node);
+    if (!node)
+      return;
+
+    if (node->mLeft)
+      visit(node->mLeft, f);
+
+    f(node->mKey, node->mValue);
+
+    if (node->mRight)
+      visit(node->mRight, f);
   }
 
   BaseTreeNode *mRoot = nullptr;

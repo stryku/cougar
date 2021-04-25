@@ -82,4 +82,25 @@ TEST(MapTests, HeterogenousTypes) {
   EXPECT_EQ(13 + 7, map.find("derived")->value());
 }
 
+TEST(MapTests, Iteration) {
+  ZoneAllocator zone;
+  Map<int, char> map;
+
+  map.emplace(2, 'u');
+  map.emplace(0, 'C');
+  map.emplace(5, 'r');
+  map.emplace(1, 'o');
+  map.emplace(3, 'g');
+  map.emplace(4, 'a');
+
+  std::string out;
+
+  map.for_each([&](const auto &key, auto &val) {
+    (void)key;
+    out += val;
+  });
+
+  EXPECT_EQ("Cougar", out);
+}
+
 } // namespace Cougar::Utils::Tests
