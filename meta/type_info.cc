@@ -1,6 +1,7 @@
 #include "type_info.hh"
 
 #include "utils/iprint.hh"
+#include "utils/overloaded.hh"
 
 #include <cassert>
 #include <stdexcept>
@@ -10,8 +11,15 @@ namespace Cougar::Meta {
 using namespace Utils;
 
 void TypeInfo::dump(int indent) const {
-  // TODO visit variant
-  iprint(indent, "Type()");
+
+  std::visit(overloaded{[&](const Pointer &p) {
+                          iprint(indent, "Pointer To:");
+                          p.pointed->dump(indent + 2);
+                        },
+                        [&](const Simple &s) {
+                          iprint(indent, "SimpleType({})", s.mName);
+                        }},
+             mData);
 }
 
 void TypeInfo::setPointerType(TypeInfo *ptrType) {

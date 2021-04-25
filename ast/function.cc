@@ -30,8 +30,8 @@ void FunctionDeclaration::setBody(StatementGroup *body) {
   mBody = body;
 }
 
-void FunctionArg::doDump(int indent) const {
-  iprint(indent, "FunctionArg(type={}, name={})", mType->name(), mName);
+void FunctionArg::dump(int indent) const {
+  iprint(indent, "FunctionArg(type={}, name={})", type->name(), name);
 }
 
 } // namespace Cougar::Ast

@@ -7,18 +7,17 @@ namespace Cougar::Ast {
 class TypeNode;
 class StatementGroup;
 
-struct FunctionArg : Node {
+struct FunctionArg {
 public:
   FunctionArg(TypeNode *argType, std::string_view argName)
-      : mType(argType), mName(argName) {
+      : type(argType), name(argName) {
     assert(argType);
   }
 
-private:
-  void doDump(int indent = 0) const override;
+  void dump(int indent = 0) const;
 
-  TypeNode *mType;
-  std::string_view mName;
+  TypeNode *type = nullptr;
+  std::string_view name;
 };
 
 class FunctionDeclaration : public NodeOnToken {
@@ -37,6 +36,8 @@ public:
   TypeNode *returnType() { return mReturnType; }
 
   std::string_view name() const { return mName; }
+
+  Utils::ListView<FunctionArg> args() { return mArgs; }
 
 private:
   void doDump(int indent = 0) const override;

@@ -17,24 +17,14 @@ public:
     TypeInfo *type;
   };
 
-  FunctionInfo(std::string_view name, TypeInfo *retType,
-               Utils::SourceLocation loc)
-      : mName(name), mReturnType(retType), mLocation(loc) {}
+  FunctionInfo(std::string_view name) : name(name) {}
 
-  std::string_view name() const { return mName; }
-  TypeInfo *returnType() { return mReturnType; }
+  const std::string_view name;
+  TypeInfo *returnType = nullptr;
+  Utils::List<Arg> args;
+  Utils::SourceLocation location;
 
-  void addArg(std::string_view name, TypeInfo *type) {
-    mArgs.emplace_back(Arg{name, type});
-  }
-
-  const Utils::SourceLocation &location() const { return mLocation; }
-
-private:
-  std::string_view mName;
-  TypeInfo *mReturnType = nullptr;
-  Utils::List<Arg> mArgs;
-  Utils::SourceLocation mLocation;
+  void dump(int indent) const;
 };
 
 } // namespace Cougar::Meta

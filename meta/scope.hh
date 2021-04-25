@@ -13,7 +13,10 @@ class _built_in_tag;
 
 class Scope {
 public:
-  Scope(std::string_view name, Scope *parent) : mName(name), mParent(parent) {}
+  Scope(std::string_view name, Scope *parent) : mName(name), mParent(parent) {
+    if (parent)
+      parent->mChildren.emplace(name, this);
+  }
 
   Scope(const _built_in_tag &) { mIsBuiltIn = true; }
 
@@ -24,9 +27,9 @@ public:
 
   Scope *parent() { return mParent; }
 
-  // FunctionInfo *addFunction(std::string_view name) {
-  //   mFunctions.emplace(name, name);
-  // }
+  FunctionInfo *addFunction(std::string_view name) {
+    return mFunctions.emplace(name, name);
+  }
 
   FunctionInfo *findFunction(std::string_view name) {
     return mFunctions.find(name);
@@ -39,6 +42,7 @@ private:
 
   Utils::Map<std::string_view, TypeInfo> mTypes;
   Utils::Map<std::string_view, FunctionInfo> mFunctions;
+  Utils::Map<std::string_view, Scope *> mChildren;
 };
 
 } // namespace Cougar::Meta

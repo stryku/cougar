@@ -58,6 +58,8 @@ public:
       visit(mRoot, f);
   }
 
+  bool empty() const { return mRoot == nullptr; }
+
 private:
   template <typename ValueT, typename KeyCompatT, typename... Args>
   ValueT *doEmplace(BaseTreeNode *&parent, const KeyCompatT &key,

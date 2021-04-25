@@ -3,12 +3,19 @@
 #include "zone_allocator.hh"
 
 #include <cassert>
+#include <iterator>
 
 namespace Cougar::Utils {
 
 template <typename NodeT> class ListIterator {
 public:
   explicit ListIterator(NodeT *n) : mNode(n) {}
+
+  using iterator_category = std::forward_iterator_tag;
+  using value_type = decltype(NodeT::mElement);
+  using pointer = value_type *;
+  using reference = value_type &;
+  using difference_type = std::ptrdiff_t;
 
   auto &operator*() {
     assert(mNode);
