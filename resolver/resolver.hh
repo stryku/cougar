@@ -18,7 +18,7 @@ namespace Cougar::Resolver {
 
 // TODO move somwhere else
 struct CompilationState {
-  const Meta::Scope *mBuildInScope = nullptr;
+  Meta::Scope *mBuildInScope = nullptr;
   Meta::Scope *mRootScope = nullptr;
 };
 
@@ -36,6 +36,7 @@ private:
                                   Meta::Scope *scope);
 
   Meta::TypeInfo *resolveType(Ast::TypeNode *tn, Meta::Scope *scope);
+  Meta::TypeInfo *resolveNamedType(std::string_view name, Meta::Scope *scope);
 
   Utils::Diagnostics &mDiag;
   CompilationState &mState;

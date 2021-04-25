@@ -5,6 +5,7 @@
 #include "meta/scope.hh"
 #include "meta/type_info.hh"
 
+#include "utils/overloaded.hh"
 #include "utils/zone_allocator.hh"
 
 #include <cassert>
@@ -15,37 +16,54 @@ using namespace Ast;
 using namespace Meta;
 using namespace Utils;
 
-// class TypeVisitor : public Ast::IPointerNodeVisitor {
-// public:
-//   TypeVisitor(Resolver *r, Scope *s) : mResolver(r), mScope(s) {}
+Meta::TypeInfo *Resolver::resolveType(TypeNode *tn, Meta::Scope *scope) {
 
-//   void on(Ast::TypeName *nameNode) {
-//     mResult = mResolver->resolveTypeName(nameNode, mScope);
-//   }
+  Meta::TypeInfo *resolved = tn->visit( //
+      overloaded                        //
+      {                                 // pointer
+       [&](const TypeNode::Pointer &ptr) {
+         // recursively resolve pointed type
+         Meta::TypeInfo *ti = resolveType(ptr.pointedType, scope);
+         Meta::TypeInfo *ptrTi = ti->pointerType();
+         if (!ptrTi) {
+           Meta::TypeInfo::Pointer p;
+           p.pointed = ti;
+           ptrTi = Zone::make<Meta::TypeInfo>(p);
+         }
+         return ptrTi;
+       },
+       // named
+       [&](const TypeNode::Named &n) {
+         Meta::TypeInfo *ti = resolveNamedType(n.name, scope);
+         if (!ti) {
+           if (tn->token()) {
+             mDiag.error(tn->token()->location, "Unknown type '{}'", n.name);
+           } else {
+             // TODO - how to report an error?
+             throw std::runtime_error(fmt::format("Unknown type '{}'", n.name));
+           }
+         }
+         return ti;
+       }});
 
-//   void on(Ast::PointerTo *ptrNode) {
-//     ptrNode->pointedType()->visit(*this);
-//     if (mResult) {
-//       Meta::TypeInfo *ptr = mResult->pointerType();
-//       if (!ptr) {
-//         Meta::TypeInfo::Pointer p;
-//         p.pointed = mResult;
-//         ptr = Zone::make<Meta::TypeInfo>(p);
-//       }
-//       mResult = ptr;
-//     }
-//   }
+  // TODO assign resolved type to token, if present
+  return resolved;
+}
 
-//   Resolver *mResolver = nullptr;
-//   Scope *mScope = nullptr;
-//   Meta::TypeInfo *mResult = nullptr;
-// };
+Meta::TypeInfo *Resolver::resolveNamedType(std::string_view name,
+                                           Meta::Scope *scope) {
 
-Meta::TypeInfo *Resolver::resolveType(Ast::TypeNode *tn, Meta::Scope *scope) {
+  // see if it may be a built-in type
+  TypeInfo *ti = mState.mBuildInScope->findType(name);
+  if (ti)
+    return ti;
 
-  // TODO
-  (void)tn;
-  (void)scope;
+  // traverse local scopes
+  for (; scope->parent(); scope = scope->parent()) {
+    TypeInfo *ti = scope->findType(name);
+    if (ti)
+      return ti;
+  }
   return nullptr;
 }
 

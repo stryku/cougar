@@ -10,11 +10,11 @@ namespace Cougar::Ast {
 class TypeNode : public NodeOnToken {
 public:
   struct Pointer {
-    TypeNode *mPointedType;
+    TypeNode *pointedType;
   };
 
   struct Named {
-    std::string_view mName;
+    std::string_view name;
   };
 
   TypeNode(std::string_view name, const Lexer::Token *tok = nullptr)
@@ -24,6 +24,8 @@ public:
       : NodeOnToken(tok), mData(Pointer{pointedType}) {}
 
   std::string name() const; // rendered name for in-line printing
+
+  template <typename F> auto visit(F f) { return std::visit(f, mData); }
 
 private:
   void doDump(int indent) const override;

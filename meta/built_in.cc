@@ -10,7 +10,7 @@ using namespace Utils;
 
 class _built_in_tag {};
 
-const Scope *createBuiltInScope() {
+Scope *createBuiltInScope() {
 
   Scope *builtIn = Zone::make<Scope>(_built_in_tag{});
 

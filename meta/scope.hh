@@ -19,6 +19,9 @@ public:
   void dump(int indent = 0) const;
 
   TypeInfo *addType(TypeInfo::Simple s) { return mTypes.emplace(s.mName, s); }
+  TypeInfo *findType(std::string_view name) { return mTypes.find(name); }
+
+  Scope *parent() { return mParent; }
 
 private:
   std::string_view mName;

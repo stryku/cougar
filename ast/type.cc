@@ -8,10 +8,10 @@ void TypeNode::doDump(int indent) const {
 
   std::visit(overloaded{[&](const Pointer &ptr) {
                           iprint(indent, "PointerTo:");
-                          ptr.mPointedType->dump(indent + 2);
+                          ptr.pointedType->dump(indent + 2);
                         },
                         [&](const Named &n) {
-                          iprint(indent, "Type(name={})", n.mName);
+                          iprint(indent, "Type(name={})", n.name);
                         }},
              mData);
 }
@@ -19,9 +19,9 @@ void TypeNode::doDump(int indent) const {
 std::string TypeNode::name() const {
   return std::visit(
       overloaded{[&](const Pointer &ptr) {
-                   return fmt::format("{}*", ptr.mPointedType->name());
+                   return fmt::format("{}*", ptr.pointedType->name());
                  },
-                 [&](const Named &n) { return std::string(n.mName); }},
+                 [&](const Named &n) { return std::string(n.name); }},
       mData);
 }
 
