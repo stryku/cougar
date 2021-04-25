@@ -59,6 +59,12 @@ Ast::FunctionDeclaration *Parser::parseFunction(TokenIterator &it,
 
   while (true) {
 
+    // Got function without parameters
+    if (it->type == TokenType::ParentClose) {
+      ++it;
+      break;
+    }
+
     // arg type
     if (it->type != TokenType::Identifier) {
       mDiag.error(it->location, "Expected argument type");
