@@ -1,10 +1,8 @@
 #include "type.hh"
 
-namespace Cougar::Ast {
+#include "utils/overloaded.hh"
 
-// TODO move to Utils
-template <class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
-template <class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
+namespace Cougar::Ast {
 
 void TypeNode::doDump(int indent) const {
 
