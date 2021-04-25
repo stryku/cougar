@@ -34,6 +34,7 @@ public:
 
   void setBody(StatementGroup *body);
   StatementGroup *body() { return mBody; }
+  TypeNode *returnType() { return mReturnType; }
 
 private:
   void doDump(int indent = 0) const override;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string_view>
+#include <variant>
 
 namespace Cougar::Meta {
 
@@ -8,14 +9,27 @@ class Scope;
 
 class TypeInfo {
 public:
-  TypeInfo(std::string_view name) : mName(name) {}
+  struct Pointer {
+    TypeInfo *pointed = nullptr;
+  };
+
+  struct Simple {
+    std::string_view mName;
+  };
+
+  TypeInfo(Simple s) : mData(s) {}
+  TypeInfo(Pointer p) : mData(p) {}
 
   void dump(int indent) const;
 
+  TypeInfo *pointerType() { return mPointerType; }
+  void setPointerType(TypeInfo *ptrType);
+
+  bool isPointer() const { return std::holds_alternative<Pointer>(mData); }
+
 private:
-  std::string_view mName;
-  Scope *mScope = nullptr;
-  // TODO other important fields
+  std::variant<Pointer, Simple> mData;
+  TypeInfo *mPointerType = nullptr;
 };
 
 } // namespace Cougar::Meta

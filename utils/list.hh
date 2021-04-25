@@ -33,23 +33,15 @@ private:
   NodeT *mNode = nullptr;
 };
 
-/// A linked list linving a zoned allocator
-template <typename T> class List {
+/// A linked list living a zoned allocator
+
+template <typename T> class ListView {
+protected:
   struct ListNode;
 
 public:
   using iterator = ListIterator<ListNode>;
   using const_iterator = ListIterator<const ListNode>;
-
-  template <typename... Args> void emplace_back(Args &&...args) {
-    ListNode *newNode = Zone::make<ListNode>(std::forward<Args>(args)...);
-    if (!mFirst) {
-      mFirst = newNode;
-    } else {
-      mLast->mNext = newNode;
-    }
-    mLast = newNode;
-  }
 
   auto begin() { return ListIterator<ListNode>(mFirst); }
   auto end() { return ListIterator<ListNode>(nullptr); }
@@ -59,7 +51,7 @@ public:
 
   bool empty() const { return mFirst == nullptr; }
 
-private:
+protected:
   struct ListNode {
 
     template <typename... Args>
@@ -71,6 +63,21 @@ private:
 
   ListNode *mFirst = nullptr;
   ListNode *mLast = nullptr;
+};
+
+template <typename T> class List final : public ListView<T> {
+  using ListNode = typename ListView<T>::ListNode;
+
+public:
+  template <typename... Args> void emplace_back(Args &&...args) {
+    ListNode *newNode = Zone::make<ListNode>(std::forward<Args>(args)...);
+    if (!this->mFirst) {
+      this->mFirst = newNode;
+    } else {
+      this->mLast->mNext = newNode;
+    }
+    this->mLast = newNode;
+  }
 };
 
 } // namespace Cougar::Utils

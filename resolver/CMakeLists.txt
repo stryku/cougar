@@ -1,5 +1,8 @@
 add_library(resolver_lib
   resolver.hh resolver.cc
+
+  resolve_function.cc
+  resolve_type.cc
 )
 
 add_executable(resolver_driver

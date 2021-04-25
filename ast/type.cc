@@ -8,7 +8,7 @@ void TypeName::doDump(int indent) const {
 
 void PointerTo::doDump(int indent) const {
   iprint(indent, "PointerTo:");
-  mPointee->dump(indent + 2);
+  mPointedType->dump(indent + 2);
 }
 
 } // namespace Cougar::Ast

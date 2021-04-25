@@ -14,7 +14,7 @@ void Scope::dump(int indent) const {
     iprint(indent, "Scope ({})", mName);
   }
 
-  iprint(indent + 2, "- type");
+  iprint(indent + 2, "- types");
   mTypes.for_each(
       [&](const auto &, const TypeInfo &ti) { ti.dump(indent + 6); });
 }

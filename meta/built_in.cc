@@ -14,12 +14,12 @@ const Scope *createBuiltInScope() {
 
   Scope *builtIn = Zone::make<Scope>(_built_in_tag{});
 
-  builtIn->addType("int8");
-  builtIn->addType("int16");
-  builtIn->addType("int32");
-  builtIn->addType("int64");
+  builtIn->addType(TypeInfo::Simple{"int8"});
+  builtIn->addType(TypeInfo::Simple{"int16"});
+  builtIn->addType(TypeInfo::Simple{"int32"});
+  builtIn->addType(TypeInfo::Simple{"int64"});
 
-  builtIn->addType("cstr");
+  builtIn->addType(TypeInfo::Simple{"cstr"});
 
   return builtIn;
 }

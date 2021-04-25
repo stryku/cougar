@@ -18,9 +18,7 @@ public:
 
   void dump(int indent = 0) const;
 
-  TypeInfo *addType(std::string_view name) {
-    return mTypes.emplace(name, name);
-  }
+  TypeInfo *addType(TypeInfo::Simple s) { return mTypes.emplace(s.mName, s); }
 
 private:
   std::string_view mName;
