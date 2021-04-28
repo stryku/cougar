@@ -102,7 +102,7 @@ Ast::FunctionDeclaration *Parser::parseFunction(TokenIterator &it,
 
   // see if this is function defintion or declaration
   if (it->type == TokenType::BraceOpen) {
-    StatementGroup *body = parseStatements(it);
+    Statement *body = parseStatements(it);
     fun->setBody(body);
   } else if (it->type == TokenType::Semicolon) {
     ++it;

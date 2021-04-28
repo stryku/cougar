@@ -10,26 +10,23 @@ using namespace Utils;
 using Lexer::Token;
 using Lexer::TokenType;
 
-Ast::StatementGroup *Parser::parseStatements(TokenIterator &it) {
+Ast::Statement *Parser::parseStatements(TokenIterator &it) {
 
-  StatementGroup *group = Zone::make<StatementGroup>();
   TokenIterator scopeBegin = it;
   if (it->type != TokenType::BraceOpen) {
     // single statement
     Statement *s = parseStatement(it);
-    if (s) {
-      group->addStatement(s);
-    }
-    return group;
+    return s;
   }
 
-  // parse until closing bracket
+  // a brace-enclosed gropup then. Parse until closing bracket
+  Statement::Group group;
   ++it;
   while (it->type != TokenType::BraceClose) {
     if (it->type == TokenType::Eof) {
       mDiag.error(it->location, "Missing closing bracket at the end of input");
-      mDiag.error(scopeBegin->location, "Opening brakcet is here");
-      return group;
+      mDiag.error(scopeBegin->location, "Opening bracket is here");
+      return nullptr;
     }
 
     Statement *stmt = parseStatement(it);
@@ -37,20 +34,20 @@ Ast::StatementGroup *Parser::parseStatements(TokenIterator &it) {
       mDiag.error(it->location, "Parse error");
       return nullptr;
     }
-    group->addStatement(stmt);
+    group.statements.emplace_back(stmt);
   }
   ++it;
-  return group;
+  return Zone::make<Statement>(group, &*scopeBegin);
 }
 
 Statement *Parser::parseStatement(TokenIterator &it) {
 
-  FunctioncCallStatement *fc = parseFunctionCall(it);
+  Statement *fc = parseFunctionCall(it);
 
   return fc;
 }
 
-FunctioncCallStatement *Parser::parseFunctionCall(TokenIterator &it) {
+Statement *Parser::parseFunctionCall(TokenIterator &it) {
   TokenIterator first = it;
   if (it->type != TokenType::Identifier)
     return nullptr;
@@ -63,11 +60,12 @@ FunctioncCallStatement *Parser::parseFunctionCall(TokenIterator &it) {
   ++it;
 
   // commited here
-  std::string_view funName = first->content;
+  Statement::FunctionCall fun;
+  fun.name = first->content;
 
   // parse param pack
-  ParamPack *params = parseParamPack(it);
-  if (!params) {
+  fun.params = parseParamPack(it);
+  if (!fun.params) {
     return nullptr;
   }
 
@@ -83,7 +81,7 @@ FunctioncCallStatement *Parser::parseFunctionCall(TokenIterator &it) {
   }
   ++it;
 
-  return Zone::make<FunctioncCallStatement>(funName, params, &*first);
+  return Zone::make<Statement>(fun, &*first);
 }
 
 } // namespace Cougar::Parser

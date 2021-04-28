@@ -9,7 +9,7 @@ class FunctionInfo;
 namespace Cougar::Ast {
 
 class TypeNode;
-class StatementGroup;
+class Statement;
 
 struct FunctionArg {
 public:
@@ -35,8 +35,8 @@ public:
 
   void addArg(TypeNode *argType, std::string_view argName);
 
-  void setBody(StatementGroup *body);
-  StatementGroup *body() { return mBody; }
+  void setBody(Statement *body);
+  Statement *body() { return mBody; }
   TypeNode *returnType() { return mReturnType; }
 
   std::string_view name() const { return mName; }
@@ -53,8 +53,8 @@ private:
 
   Access mAccess;
   std::string_view mName;
-  TypeNode *mReturnType;
-  StatementGroup *mBody;
+  TypeNode *mReturnType = nullptr;
+  Statement *mBody = nullptr;
 
   Utils::List<FunctionArg> mArgs;
   Meta::FunctionInfo *mInfo = nullptr;

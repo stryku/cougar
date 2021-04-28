@@ -52,9 +52,9 @@ private:
                                           Ast::Access access);
   Ast::TypeNode *parseType(TokenIterator &it);
 
-  Ast::StatementGroup *parseStatements(TokenIterator &it);
+  Ast::Statement *parseStatements(TokenIterator &it);
   Ast::Statement *parseStatement(TokenIterator &it);
-  Ast::FunctioncCallStatement *parseFunctionCall(TokenIterator &it);
+  Ast::Statement *parseFunctionCall(TokenIterator &it);
   Ast::ParamPack *parseParamPack(TokenIterator &it);
   Ast::Expression *parseExpression(TokenIterator &it);
 

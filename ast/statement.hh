@@ -2,37 +2,34 @@
 
 #include "node.hh"
 
+#include <variant>
+
 namespace Cougar::Ast {
 
 class ParamPack;
 
 class Statement : public NodeOnToken {
 public:
-  Statement(const Lexer::Token *tok = nullptr) : NodeOnToken(tok) {}
-};
+  struct Group {
+    Utils::List<Statement *> statements;
+  };
 
-class StatementGroup : public Statement {
-public:
-  void addStatement(Statement *stm) { mStatements.emplace_back(stm); }
+  struct FunctionCall {
+    std::string_view name;
+    ParamPack *params = nullptr;
+  };
 
-  Utils::List<Statement *> &statements() { return mStatements; }
+  Statement(Group d, const Lexer::Token *tok = nullptr)
+      : NodeOnToken(tok), mData(d) {}
 
-private:
-  void doDump(int indent = 0) const override;
+  Statement(FunctionCall d, const Lexer::Token *tok = nullptr)
+      : NodeOnToken(tok), mData(d) {}
 
-  Utils::List<Statement *> mStatements;
-};
-
-class FunctioncCallStatement : public Statement {
-public:
-  FunctioncCallStatement(std::string_view funName, ParamPack *params,
-                         const Lexer::Token *tok = nullptr)
-      : Statement(tok), mFunName(funName), mParams(params) {}
+  template <typename F> auto visit(F f) { return std::visit(f, mData); }
 
 private:
   void doDump(int indent = 0) const override;
-  std::string_view mFunName;
-  ParamPack *mParams = nullptr;
+  std::variant<Group, FunctionCall> mData;
 };
 
 }; // namespace Cougar::Ast
