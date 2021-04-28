@@ -10,3 +10,4 @@ add_library(ast_lib
 target_include_directories(ast_lib INTERFACE ..)
 
 target_link_libraries(ast_lib PUBLIC utils_lib)
+target_link_libraries(ast_lib PUBLIC meta_lib)

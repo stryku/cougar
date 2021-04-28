@@ -2,6 +2,10 @@
 
 #include "node.hh"
 
+namespace Cougar::Meta {
+class FunctionInfo;
+}
+
 namespace Cougar::Ast {
 
 class TypeNode;
@@ -39,6 +43,11 @@ public:
 
   Utils::ListView<FunctionArg> args() { return mArgs; }
 
+  void setInfo(Meta::FunctionInfo *fi) {
+    assert(!mInfo);
+    mInfo = fi;
+  }
+
 private:
   void doDump(int indent = 0) const override;
 
@@ -48,6 +57,7 @@ private:
   StatementGroup *mBody;
 
   Utils::List<FunctionArg> mArgs;
+  Meta::FunctionInfo *mInfo = nullptr;
 };
 
 } // namespace Cougar::Ast

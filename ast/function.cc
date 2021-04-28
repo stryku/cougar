@@ -3,10 +3,16 @@
 #include "statement.hh"
 #include "type.hh"
 
+#include "meta/function_info.hh"
+
 namespace Cougar::Ast {
 
 void FunctionDeclaration::doDump(int indent) const {
   iprint(indent, "FunctionDeclaration(access={}, name={})", mAccess, mName);
+  if (mInfo) {
+    iprint(indent + 2, "- resolved as:");
+    mInfo->dump(indent + 6);
+  }
   iprint(indent + 2, "- return type:");
   mReturnType->dump(indent + 6);
   iprint(indent + 2, "- args:");

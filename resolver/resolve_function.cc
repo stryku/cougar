@@ -69,6 +69,8 @@ void Resolver::resolveFunctionDelcaration(Ast::FunctionDeclaration *decl,
       result->location = decl->token()->location;
       result->args = args;
       result->returnType = rti;
+
+      decl->setInfo(result);
     }
   }
 }
