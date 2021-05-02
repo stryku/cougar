@@ -36,6 +36,9 @@ public:
   ModuleWrapper(const ModuleWrapper &) = delete;
   ~ModuleWrapper();
 
+  llvm::Module &operator*() { return *mModule; }
+  llvm::Module *operator->() { return mModule; }
+
 private:
   llvm::Module *mModule = nullptr;
 };

@@ -41,15 +41,14 @@ ModuleWrapper CodeGenerator::generate(Ast::Module &moduleAST) {
   return ModuleWrapper(module.release());
 }
 
-void CodeGenerator::compile(ModuleWrapper &mwrap) {
-  (void)mwrap;
+void CodeGenerator::compile(ModuleWrapper &module) {
+  (void)module;
 
   throw std::logic_error("Compilation not impelmented");
 }
 
-void CodeGenerator::dumpIR(ModuleWrapper &mwrap) {
-  (void)mwrap;
-  throw std::logic_error("IR dump impelmented");
+void CodeGenerator::dumpIR(ModuleWrapper &module) {
+  module->print(llvm::errs(), nullptr);
 }
 
 } // namespace Cougar::LlvmCodeGenerator
