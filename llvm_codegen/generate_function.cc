@@ -53,11 +53,7 @@ llvm::Type *CodeGenerator::toLlvm(Meta::TypeInfo *ti) {
 
 void CodeGenerator::generateFunction(Ast::FunctionDeclaration &funAST,
                                      llvm::Module &module) {
-  Ast::Statement *body = funAST.body();
   Meta::FunctionInfo *info = funAST.info();
-
-  if (!body)
-    return; // just a declaration
 
   if (!info) {
     throw std::runtime_error(
@@ -82,6 +78,7 @@ void CodeGenerator::generateFunction(Ast::FunctionDeclaration &funAST,
                              llvm::Twine(info->name), module);
 
   (void)function;
+  // Ast::Statement *body = funAST.body();
 }
 
 } // namespace Cougar::LlvmCodeGenerator
