@@ -1,3 +1,5 @@
+#include "llvm_codegen/code_generator.hh"
+
 #include "parser/parser.hh"
 
 #include "resolver/resolver.hh"
@@ -155,8 +157,19 @@ void compileFile(std::string_view path, Phase stopAfter,
     return;
   }
 
-  // TODO codegen
-  throw std::runtime_error("Code generation not implemented");
+  // codegen
+  LlvmCodeGenerator::CodeGenerator codeGen;
+  auto llvmModule = codeGen.generate(*module);
+
+  if (stopAfter == Phase::Codegen) {
+    diag.print();
+    codeGen.dumpIR(llvmModule);
+    return;
+  }
+
+  codeGen.compile(llvmModule);
+
+  // TODO link
 }
 
 } // namespace
