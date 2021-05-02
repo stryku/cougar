@@ -2,6 +2,8 @@
 
 #include "utils/overloaded.hh"
 
+#include "meta/type_info.hh"
+
 namespace Cougar::Ast {
 
 void Expression::doDump(int indent) const {
@@ -9,6 +11,10 @@ void Expression::doDump(int indent) const {
                iprint(indent, "StringLiteral(\"{}\")", d.content);
              }},
              mData);
+  if (mType) {
+    iprint(indent + 2, "[type resolved as:]");
+    mType->dump(indent + 6);
+  }
 }
 
 void ParamPack::doDump(int indent) const {

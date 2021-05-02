@@ -1,5 +1,6 @@
 #include "resolver.hh"
 
+#include "ast/expression.hh"
 #include "ast/statement.hh"
 
 #include "meta/scope.hh"
@@ -21,14 +22,15 @@ void Resolver::resolveStatementGroup(StGroup &grp, Meta::Scope *groupScope) {
 
 void Resolver::resolveFunctionCall(StFunctionCall &stmt, Meta::Scope *scope) {
 
-  // TODO
   // - resolve arguments
+  for (Expression *&e : stmt.params->params()) {
+    resolveExpression(e, scope);
+  }
+
+  // TODO
   // - find function by name
   // - TODO - perform overload resolution
   // - inject cast expression if required
-
-  (void)scope;
-  (void)stmt;
 }
 
 void Resolver::resolveStatement(Ast::Statement *stmt, Meta::Scope *scope) {

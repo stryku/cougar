@@ -4,6 +4,10 @@
 
 #include <variant>
 
+namespace Cougar::Meta {
+class TypeInfo;
+}
+
 namespace Cougar::Ast {
 
 struct ExStringLiteral {
@@ -17,10 +21,19 @@ public:
 
   template <typename F> auto visit(F f) { return std::visit(f, mData); }
 
+  void setType(Meta::TypeInfo *t) {
+    assert(t);
+    assert(!mType);
+    mType = t;
+  }
+
+  Meta::TypeInfo *type() const { return mType; }
+
 private:
   void doDump(int indent = 0) const override;
 
   std::variant<ExStringLiteral> mData;
+  Meta::TypeInfo *mType = nullptr;
 };
 
 // pack of parameters passes to actual function call

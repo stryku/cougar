@@ -7,9 +7,12 @@ class Module;
 class FunctionDeclaration;
 class TypeNode;
 class TypeName;
+
 class Statement;
 struct StGroup;
 struct StFunctionCall;
+
+class Expression;
 } // namespace Cougar::Ast
 
 namespace Cougar::Meta {
@@ -43,6 +46,8 @@ private:
 
   void resolveStatementGroup(Ast::StGroup &stmt, Meta::Scope *groupScope);
   void resolveFunctionCall(Ast::StFunctionCall &stmt, Meta::Scope *scope);
+
+  void resolveExpression(Ast::Expression *e, Meta::Scope *scope);
 
   Utils::Diagnostics &mDiag;
   CompilationState &mState;

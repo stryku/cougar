@@ -4,6 +4,7 @@ add_library(resolver_lib
   resolve_function.cc
   resolve_type.cc
   resolve_statement.cc
+  resolve_expression.cc
 )
 
 add_executable(resolver_driver
