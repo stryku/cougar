@@ -4,6 +4,10 @@
 
 #include <variant>
 
+namespace Cougar::Meta {
+class TypeInfo;
+}
+
 namespace Cougar::Ast {
 
 // type node
@@ -27,9 +31,15 @@ public:
 
   template <typename F> auto visit(F f) { return std::visit(f, mData); }
 
+  void setInfo(Meta::TypeInfo *i) {
+    assert(!mInfo);
+    mInfo = i;
+  }
+
 private:
   void doDump(int indent) const override;
   std::variant<Pointer, Named> mData;
+  Meta::TypeInfo *mInfo = nullptr;
 };
 
 } // namespace Cougar::Ast

@@ -10,7 +10,7 @@ namespace Cougar::Ast {
 void FunctionDeclaration::doDump(int indent) const {
   iprint(indent, "FunctionDeclaration(access={}, name={})", mAccess, mName);
   if (mInfo) {
-    iprint(indent + 2, "- resolved as:");
+    iprint(indent + 2, "[resolved as:]");
     mInfo->dump(indent + 6);
   }
   iprint(indent + 2, "- return type:");
@@ -37,7 +37,8 @@ void FunctionDeclaration::setBody(Statement *body) {
 }
 
 void FunctionArg::dump(int indent) const {
-  iprint(indent, "FunctionArg(type={}, name={})", type->name(), name);
+  iprint(indent, "FunctionArg(name={})", name);
+  type->dump(indent + 2);
 }
 
 } // namespace Cougar::Ast

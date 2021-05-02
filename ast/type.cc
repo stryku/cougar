@@ -1,5 +1,7 @@
 #include "type.hh"
 
+#include "meta/type_info.hh"
+
 #include "utils/overloaded.hh"
 
 namespace Cougar::Ast {
@@ -14,6 +16,11 @@ void TypeNode::doDump(int indent) const {
                           iprint(indent, "Type(name={})", n.name);
                         }},
              mData);
+
+  if (mInfo) {
+    iprint(indent + 2, "[resolved as:]");
+    mInfo->dump(indent + 6);
+  }
 }
 
 std::string TypeNode::name() const {

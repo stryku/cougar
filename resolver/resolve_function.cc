@@ -36,9 +36,10 @@ void Resolver::resolveFunctionDelcaration(Ast::FunctionDeclaration *decl,
   Utils::List<FunctionInfo::Arg> args;
   bool ok = true;
   for (FunctionArg &fa : decl->args()) {
-    TypeInfo *rti = resolveType(fa.type, scope);
-    if (rti && ok) {
-      args.emplace_back(FunctionInfo::Arg{fa.name, rti});
+    TypeInfo *ti = resolveType(fa.type, scope);
+    if (ti && ok) {
+      args.emplace_back(FunctionInfo::Arg{fa.name, ti});
+      fa.type->setInfo(ti);
     } else {
       ok = false;
     }
@@ -49,8 +50,11 @@ void Resolver::resolveFunctionDelcaration(Ast::FunctionDeclaration *decl,
   TypeNode *rtn = decl->returnType();
   TypeInfo *rti = resolveType(rtn, scope);
 
-  if (!rti)
+  if (!rti) {
     ok = false;
+  } else {
+    rtn->setInfo(rti);
+  }
 
   if (ok) {
 
