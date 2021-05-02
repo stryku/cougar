@@ -2,6 +2,8 @@
 
 #include "expression.hh"
 
+#include "meta/function_info.hh"
+
 namespace Cougar::Ast {
 
 namespace {
@@ -22,6 +24,10 @@ void dumpStatement(int indent, const StFunctionCall &f) {
     for (const Expression *e : f.params->params()) {
       e->dump(indent + 6);
     }
+  }
+  if (f.info) {
+    iprint(indent + 2, "[resolved as:]");
+    f.info->dump(indent + 4);
   }
 }
 

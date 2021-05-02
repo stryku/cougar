@@ -4,6 +4,10 @@
 
 #include <variant>
 
+namespace Cougar::Meta {
+class FunctionInfo;
+}
+
 namespace Cougar::Ast {
 
 class ParamPack;
@@ -16,6 +20,7 @@ struct StGroup {
 struct StFunctionCall {
   std::string_view name;
   ParamPack *params = nullptr;
+  Meta::FunctionInfo *info = nullptr;
 };
 
 class Statement : public NodeOnToken {

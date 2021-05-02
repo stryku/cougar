@@ -18,6 +18,7 @@ class Expression;
 namespace Cougar::Meta {
 class Scope;
 class TypeInfo;
+class FunctionInfo;
 } // namespace Cougar::Meta
 
 namespace Cougar::Resolver {
@@ -45,7 +46,11 @@ private:
   void resolveStatement(Ast::Statement *stmt, Meta::Scope *scope);
 
   void resolveStatementGroup(Ast::StGroup &stmt, Meta::Scope *groupScope);
-  void resolveFunctionCall(Ast::StFunctionCall &stmt, Meta::Scope *scope);
+  void resolveFunctionCall(const Utils::SourceLocation &loc,
+                           Ast::StFunctionCall &stmt, Meta::Scope *scope);
+
+  Meta::FunctionInfo *resolveNamedFunction(std::string_view name,
+                                           Meta::Scope *scope);
 
   void resolveExpression(Ast::Expression *e, Meta::Scope *scope);
 
