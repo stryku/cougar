@@ -17,7 +17,7 @@ void TypeInfo::dump(int indent) const {
                           p.pointed->dump(indent + 2);
                         },
                         [&](const Simple &s) {
-                          iprint(indent, "SimpleType({})", s.mName);
+                          iprint(indent, "SimpleType({})", s.name);
                         }},
              mData);
 }
