@@ -2,11 +2,25 @@
 
 #include "node.hh"
 
+#include <variant>
+
 namespace Cougar::Ast {
+
+struct ExStringLiteral {
+  std::string_view content;
+};
 
 class Expression : public NodeOnToken {
 public:
-  Expression(const Lexer::Token *tok = nullptr) : NodeOnToken(tok) {}
+  Expression(const ExStringLiteral &d, const Lexer::Token *tok = nullptr)
+      : NodeOnToken(tok), mData(d) {}
+
+  template <typename F> auto visit(F f) { return std::visit(f, mData); }
+
+private:
+  void doDump(int indent = 0) const override;
+
+  std::variant<ExStringLiteral> mData;
 };
 
 // pack of parameters passes to actual function call
@@ -20,18 +34,6 @@ public:
 private:
   void doDump(int indent = 0) const override;
   Utils::List<Expression *> mParams;
-};
-
-class StringLiteral : public Expression {
-public:
-  StringLiteral(std::string_view content, const Lexer::Token *tok = nullptr)
-      : Expression(tok), mContent(content) {}
-
-  std::string_view content() const { return mContent; }
-
-private:
-  void doDump(int indent = 0) const override;
-  std::string_view mContent;
 };
 
 } // namespace Cougar::Ast

@@ -1,9 +1,14 @@
 #include "expression.hh"
 
+#include "utils/overloaded.hh"
+
 namespace Cougar::Ast {
 
-void StringLiteral::doDump(int indent) const {
-  iprint(indent, "StringLiteral(\"{}\")", mContent);
+void Expression::doDump(int indent) const {
+  std::visit(overloaded{[&](const ExStringLiteral &d) {
+               iprint(indent, "StringLiteral(\"{}\")", d.content);
+             }},
+             mData);
 }
 
 void ParamPack::doDump(int indent) const {

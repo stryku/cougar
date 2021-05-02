@@ -25,9 +25,13 @@ ParamPack *Parser::parseParamPack(TokenIterator &it) {
 
 Expression *Parser::parseExpression(TokenIterator &it) {
   if (it->type == TokenType::LitString) {
-    StringLiteral *sl = Zone::make<StringLiteral>(it->content, &*it);
+
+    ExStringLiteral sl;
+    sl.content = it->content;
+
+    Expression *e = Zone::make<Expression>(sl, &*it);
     ++it;
-    return sl;
+    return e;
   }
   return nullptr;
 }
