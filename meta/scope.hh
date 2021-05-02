@@ -4,6 +4,7 @@
 
 #include "function_info.hh"
 #include "type_info.hh"
+#include "variable_info.hh"
 
 #include "utils/map.hh"
 
@@ -35,6 +36,14 @@ public:
     return mFunctions.find(name);
   }
 
+  VariableInfo *addVariable(std::string_view name) {
+    return mVariables.emplace(name, name);
+  }
+
+  VariableInfo *findVariable(std::string_view name) {
+    return mVariables.find(name);
+  }
+
 private:
   std::string_view mName;
   Scope *mParent = nullptr;
@@ -43,6 +52,7 @@ private:
   Utils::Map<std::string_view, TypeInfo> mTypes;
   Utils::Map<std::string_view, FunctionInfo> mFunctions;
   Utils::Map<std::string_view, Scope *> mChildren;
+  Utils::Map<std::string_view, VariableInfo> mVariables;
 };
 
 } // namespace Cougar::Meta

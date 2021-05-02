@@ -7,6 +7,9 @@ class Module;
 class FunctionDeclaration;
 class TypeNode;
 class TypeName;
+class Statement;
+struct StGroup;
+struct StFunctionCall;
 } // namespace Cougar::Ast
 
 namespace Cougar::Meta {
@@ -31,9 +34,15 @@ public:
 private:
   void resolveFunctionDelcaration(Ast::FunctionDeclaration *,
                                   Meta::Scope *scope);
+  void resolveFunctionBody(Ast::FunctionDeclaration *, Meta::Scope *scope);
 
   Meta::TypeInfo *resolveType(Ast::TypeNode *tn, Meta::Scope *scope);
   Meta::TypeInfo *resolveNamedType(std::string_view name, Meta::Scope *scope);
+
+  void resolveStatement(Ast::Statement *stmt, Meta::Scope *scope);
+
+  void resolveStatementGroup(Ast::StGroup &stmt, Meta::Scope *groupScope);
+  void resolveFunctionCall(Ast::StFunctionCall &stmt, Meta::Scope *scope);
 
   Utils::Diagnostics &mDiag;
   CompilationState &mState;

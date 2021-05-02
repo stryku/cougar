@@ -12,7 +12,7 @@ class TypeInfo;
 
 class FunctionInfo {
 public:
-  struct Arg {
+  struct Arg { // TODO: maybe this should be VariableInfo ?
     std::string_view name;
     TypeInfo *type;
   };

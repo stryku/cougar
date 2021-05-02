@@ -36,6 +36,8 @@ public:
     mInfo = i;
   }
 
+  Meta::TypeInfo *info() { return mInfo; }
+
 private:
   void doDump(int indent) const override;
   std::variant<Pointer, Named> mData;

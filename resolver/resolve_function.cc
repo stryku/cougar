@@ -1,10 +1,14 @@
 #include "resolver.hh"
 
 #include "ast/function.hh"
+#include "ast/statement.hh"
 #include "ast/type.hh"
 
 #include "meta/function_info.hh"
 #include "meta/scope.hh"
+#include "meta/variable_info.hh"
+
+#include "utils/overloaded.hh"
 
 #include <algorithm>
 #include <cassert>
@@ -28,15 +32,15 @@ bool areArgTypesSame(const Utils::List<FunctionInfo::Arg> &args1,
 } // namespace
 
 void Resolver::resolveFunctionDelcaration(Ast::FunctionDeclaration *decl,
-                                          Meta::Scope *scope) {
+                                          Meta::Scope *parentScope) {
   assert(decl);
-  assert(scope);
+  assert(parentScope);
 
   // resolve args
   Utils::List<FunctionInfo::Arg> args;
   bool ok = true;
   for (FunctionArg &fa : decl->args()) {
-    TypeInfo *ti = resolveType(fa.type, scope);
+    TypeInfo *ti = resolveType(fa.type, parentScope);
     if (ti && ok) {
       args.emplace_back(FunctionInfo::Arg{fa.name, ti});
       fa.type->setInfo(ti);
@@ -48,7 +52,7 @@ void Resolver::resolveFunctionDelcaration(Ast::FunctionDeclaration *decl,
   // resolve return type
   // TODO support for 'auto'
   TypeNode *rtn = decl->returnType();
-  TypeInfo *rti = resolveType(rtn, scope);
+  TypeInfo *rti = resolveType(rtn, parentScope);
 
   if (!rti) {
     ok = false;
@@ -60,7 +64,7 @@ void Resolver::resolveFunctionDelcaration(Ast::FunctionDeclaration *decl,
 
     // check for collision
     std::string_view name = decl->name();
-    FunctionInfo *collision = scope->findFunction(name);
+    FunctionInfo *collision = parentScope->findFunction(name);
 
     // compare types
     if (collision && areArgTypesSame(collision->args, args)) {
@@ -69,7 +73,7 @@ void Resolver::resolveFunctionDelcaration(Ast::FunctionDeclaration *decl,
       mDiag.error(collision->location, "Previously defined here");
     } else {
 
-      FunctionInfo *result = scope->addFunction(name);
+      FunctionInfo *result = parentScope->addFunction(name);
       result->location = decl->token()->location;
       result->args = args;
       result->returnType = rti;
@@ -77,6 +81,58 @@ void Resolver::resolveFunctionDelcaration(Ast::FunctionDeclaration *decl,
       decl->setInfo(result);
     }
   }
+}
+
+void Resolver::resolveFunctionBody(Ast::FunctionDeclaration *decl,
+                                   Meta::Scope *parentScope) {
+
+  assert(decl);
+  assert(parentScope);
+
+  // does the function have body?
+  // was the function declaration successfully resolved?
+  if (!decl->body() || !decl->info())
+    return;
+
+  // create a Scope for the function
+  Scope *functionScope = Zone::make<Scope>("", parentScope);
+
+  // create variables
+  for (auto arg : decl->args()) {
+
+    // function param can be nameless, which means it is unused
+    if (arg.name.empty())
+      continue;
+
+    assert(arg.type);
+
+    // ensure the arg is not unique
+    VariableInfo *collision = functionScope->findVariable(arg.name);
+    if (collision) {
+      mDiag.error(arg.type->token()->location,
+                  "Redefinition of function argument '{}'", arg.name);
+      mDiag.error(collision->location, "Previous definition here");
+      continue;
+    }
+
+    // if arg type is invalid, skip
+    TypeInfo *argTypeInfo = arg.type->info();
+    if (!argTypeInfo)
+      continue;
+
+    auto var = functionScope->addVariable(arg.name);
+    var->type = argTypeInfo;
+    var->location = arg.type->token()->location;
+  }
+
+  // new we have a prepared scope, we can resolve statements in it.
+  Ast::Statement *body = decl->body();
+
+  body->visit(overloaded{
+      [&](Ast::StGroup &group) { resolveStatementGroup(group, functionScope); },
+      [](auto) {
+        throw std::logic_error("Function body must be a statement group");
+      }});
 }
 
 } // namespace Cougar::Resolver

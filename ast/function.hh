@@ -47,6 +47,7 @@ public:
     assert(!mInfo);
     mInfo = fi;
   }
+  Meta::FunctionInfo *info() { return mInfo; }
 
 private:
   void doDump(int indent = 0) const override;

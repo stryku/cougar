@@ -20,7 +20,7 @@ Ast::Statement *Parser::parseStatements(TokenIterator &it) {
   }
 
   // a brace-enclosed gropup then. Parse until closing bracket
-  Statement::Group group;
+  StGroup group;
   ++it;
   while (it->type != TokenType::BraceClose) {
     if (it->type == TokenType::Eof) {
@@ -60,7 +60,7 @@ Statement *Parser::parseFunctionCall(TokenIterator &it) {
   ++it;
 
   // commited here
-  Statement::FunctionCall fun;
+  StFunctionCall fun;
   fun.name = first->content;
 
   // parse param pack

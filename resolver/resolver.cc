@@ -41,6 +41,15 @@ void Resolver::resolveModule(Module *module) {
               },
               [](auto &) {}});
   }
+
+  // 2nd pass: resolve function bodies
+  for (ModuleStatement &md : module->statements()) {
+    md.visit(
+        overloaded //
+        {          //
+         [&](FunctionDeclaration *fun) { resolveFunctionBody(fun, scope); },
+         [](auto &) {}});
+  }
 }
 
 } // namespace Cougar::Resolver

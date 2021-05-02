@@ -6,7 +6,7 @@ namespace Cougar::Ast {
 
 namespace {
 
-void dumpStatement(int indent, const Statement::Group &g) {
+void dumpStatement(int indent, const StGroup &g) {
   iprint(indent, "StatementGroup:");
   iprint(indent + 2, "- statements");
   for (const Statement *stm : g.statements) {
@@ -14,7 +14,7 @@ void dumpStatement(int indent, const Statement::Group &g) {
   }
 }
 
-void dumpStatement(int indent, const Statement::FunctionCall &f) {
+void dumpStatement(int indent, const StFunctionCall &f) {
   iprint(indent, "FunctionCallStmt(name={})", f.name);
   assert(f.params);
   if (!f.params->params().empty()) {

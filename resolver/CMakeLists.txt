@@ -3,6 +3,7 @@ add_library(resolver_lib
 
   resolve_function.cc
   resolve_type.cc
+  resolve_statement.cc
 )
 
 add_executable(resolver_driver
