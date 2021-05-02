@@ -12,7 +12,6 @@
 #include "meta/built_in.hh"
 #include "meta/scope.hh"
 
-#include "utils/file_loader.hh"
 #include "utils/zone_allocator.hh"
 
 int main(int argc, char **argv) {

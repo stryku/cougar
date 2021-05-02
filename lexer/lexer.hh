@@ -55,4 +55,8 @@ Utils::List<Token> lexBuffer(std::string_view buffer);
 // Throws on error
 Utils::List<Token> lexFile(const std::string &path);
 
+inline Utils::List<Token> lexFile(std::string_view path) {
+  return lexFile(std::string(path));
+}
+
 } // namespace Cougar::Lexer

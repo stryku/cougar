@@ -20,4 +20,5 @@ add_subdirectory(llvm_experiments)
 add_subdirectory(utils)
 add_subdirectory(resolver)
 add_subdirectory(meta)
+add_subdirectory(driver)
 
