@@ -1,6 +1,7 @@
 #include "code_generator.hh"
 
 #include "ast/function.hh"
+#include "ast/statement.hh"
 #include "ast/type.hh"
 
 #include "meta/function_info.hh"
@@ -11,6 +12,7 @@
 #include <llvm/ADT/SmallVector.h>
 
 #include <llvm/IR/Function.h>
+#include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/Type.h>
 
 namespace Cougar::LlvmCodeGenerator {
@@ -78,7 +80,26 @@ void CodeGenerator::generateFunction(Ast::FunctionDeclaration &funAST,
                              llvm::Twine(info->name), module);
 
   (void)function;
-  // Ast::Statement *body = funAST.body();
+  Ast::Statement *body = funAST.body();
+  if (body) {
+    body->visit(overloaded{
+        [&](Ast::StGroup &grp) { generateFunctionBody(function, grp); },
+        [&](auto &) {
+          throw std::logic_error("CodeGenerator::generateFunction: function "
+                                 "body expected to be a statement group");
+        }});
+  }
+}
+
+void CodeGenerator::generateFunctionBody(llvm::Function *llvmFunction,
+                                         Ast::StGroup &body) {
+
+  llvm::BasicBlock *bb =
+      llvm::BasicBlock::Create(*mContext, "entry", llvmFunction);
+
+  mBuilder->SetInsertPoint(bb);
+
+  generateStatement(body);
 }
 
 } // namespace Cougar::LlvmCodeGenerator

@@ -15,6 +15,8 @@ using namespace Utils;
 
 void Resolver::resolveStatementGroup(StGroup &grp, Meta::Scope *groupScope) {
 
+  assert(!grp.scope);
+  grp.scope = groupScope;
   for (Statement *stmt : grp.statements) {
     resolveStatement(stmt, groupScope);
   }

@@ -4,7 +4,7 @@
 
 #include "utils/overloaded.hh"
 
-// #include <llvm/IR/IRBuilder.h>
+#include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/LLVMContext.h>
 // #include <llvm/IR/LegacyPassManager.h>
 #include <llvm/IR/Module.h>
@@ -27,6 +27,7 @@ ModuleWrapper::~ModuleWrapper() { delete mModule; }
 
 CodeGenerator::CodeGenerator() {
   mContext = std::make_unique<llvm::LLVMContext>();
+  mBuilder = std::make_unique<llvm::IRBuilder<>>(*mContext);
 }
 
 CodeGenerator::~CodeGenerator() = default;

@@ -6,11 +6,16 @@ namespace llvm {
 class LLVMContext;
 class Module;
 class Type;
+class Function;
+class IRBuilderBase;
 } // namespace llvm
 
 namespace Cougar::Ast {
 class Module;
 class FunctionDeclaration;
+class Statement;
+struct StGroup;
+struct StFunctionCall;
 } // namespace Cougar::Ast
 
 namespace Cougar::Meta {
@@ -34,6 +39,11 @@ public:
 private:
   // functions
   void generateFunction(Ast::FunctionDeclaration &funAST, llvm::Module &module);
+  void generateFunctionBody(llvm::Function *llvmFunction, Ast::StGroup &body);
+
+  // statements
+  void generateStatement(Ast::StGroup &grp);
+  void generateStatement(Ast::StFunctionCall &);
 
   // types
   llvm::Type *simpleTypeToLlvm(std::string_view name);
@@ -41,6 +51,7 @@ private:
   llvm::Type *pointerTypeToLlvm(Meta::TypeInfo *pointed);
 
   std::unique_ptr<llvm::LLVMContext> mContext;
+  std::unique_ptr<llvm::IRBuilderBase> mBuilder;
 };
 
 // type-hiding unique pointer to llvm::Module

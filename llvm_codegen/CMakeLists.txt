@@ -2,6 +2,7 @@ add_library(llvm_codegen_lib
   code_generator.cc code_generator.hh
 
   generate_function.cc
+  generate_statement.cc
 )
 
 target_link_libraries(llvm_codegen_lib ast_lib)

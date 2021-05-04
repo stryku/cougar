@@ -6,7 +6,8 @@
 
 namespace Cougar::Meta {
 class FunctionInfo;
-}
+class Scope;
+} // namespace Cougar::Meta
 
 namespace Cougar::Ast {
 
@@ -15,6 +16,7 @@ class Statement;
 
 struct StGroup {
   Utils::List<Statement *> statements;
+  Meta::Scope *scope = nullptr;
 };
 
 struct StFunctionCall {
