@@ -90,6 +90,12 @@ void CodeGenerator::generateFunction(Ast::FunctionDeclaration &funAST,
                                  "body expected to be a statement group");
         }});
   }
+
+  // TODO hardcode return at the end
+  // return argc
+  llvm::Value *argc = function->getArg(0);
+  // llvm::ReturnInst::Create(*mContext, argc, bb);
+  mBuilder->CreateRet(argc);
 }
 
 void CodeGenerator::generateFunctionBody(llvm::Function *llvmFunction,
