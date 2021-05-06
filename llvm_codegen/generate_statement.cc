@@ -1,6 +1,9 @@
 #include "code_generator.hh"
 
+#include "ast/expression.hh"
 #include "ast/statement.hh"
+
+#include "meta/function_info.hh"
 
 #include "utils/overloaded.hh"
 
@@ -15,8 +18,24 @@ void CodeGenerator::generateStatement(Ast::StGroup &grp) {
   }
 }
 
-void CodeGenerator::generateStatement(Ast::StFunctionCall &) {
-  // TODO
+void CodeGenerator::generateStatement(Ast::StFunctionCall &stmt) {
+
+  assert(stmt.info);
+
+  llvm::Function *fun =
+      reinterpret_cast<llvm::Function *>(stmt.info->codegenData.ptr);
+
+  assert(fun);
+
+  llvm::SmallVector<llvm::Value *, 8> args;
+
+  for (Ast::Expression *param : stmt.params->params()) {
+
+    args.push_back(
+        param->visit([&](auto &e) { return generateExpression(e); }));
+  }
+
+  mBuilder->CreateCall(fun, args, llvm::Twine(stmt.name));
 }
 
 } // namespace Cougar::LlvmCodeGenerator

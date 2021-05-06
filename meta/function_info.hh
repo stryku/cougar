@@ -1,5 +1,7 @@
 #pragma once
 
+#include "cookie.hh"
+
 #include "utils/list.hh"
 #include "utils/source_location.hh"
 
@@ -23,6 +25,7 @@ public:
   TypeInfo *returnType = nullptr;
   Utils::List<Arg> args;
   Utils::SourceLocation location;
+  Cookie codegenData;
 
   void dump(int indent) const;
 };

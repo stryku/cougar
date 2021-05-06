@@ -79,7 +79,8 @@ void CodeGenerator::generateFunction(Ast::FunctionDeclaration &funAST,
       llvm::Function::Create(functionType, llvm::Function::ExternalLinkage,
                              llvm::Twine(info->name), module);
 
-  (void)function;
+  info->codegenData.ptr = function;
+
   Ast::Statement *body = funAST.body();
   if (body) {
     body->visit(overloaded{

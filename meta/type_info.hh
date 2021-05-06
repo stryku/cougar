@@ -1,5 +1,7 @@
 #pragma once
 
+#include "cookie.hh"
+
 #include "utils/zone_allocator.hh"
 
 #include <string_view>
@@ -33,10 +35,7 @@ public:
 
   std::string_view prettyName() const { return mPrettyName; }
 
-  union {
-    void *ptr = nullptr;
-    std::uint64_t u64;
-  } codegenData;
+  Cookie codegenData;
 
   template <typename F> auto visit(F f) { return std::visit(f, mData); }
 

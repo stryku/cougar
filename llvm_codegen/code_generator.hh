@@ -8,14 +8,19 @@ class Module;
 class Type;
 class Function;
 class IRBuilderBase;
+class Value;
 } // namespace llvm
 
 namespace Cougar::Ast {
 class Module;
 class FunctionDeclaration;
+
 class Statement;
 struct StGroup;
 struct StFunctionCall;
+
+struct ExStringLiteral;
+
 } // namespace Cougar::Ast
 
 namespace Cougar::Meta {
@@ -45,13 +50,20 @@ private:
   void generateStatement(Ast::StGroup &grp);
   void generateStatement(Ast::StFunctionCall &);
 
+  // expressions
+  llvm::Value *generateExpression(Ast::ExStringLiteral &);
+
   // types
   llvm::Type *simpleTypeToLlvm(std::string_view name);
   llvm::Type *toLlvm(Meta::TypeInfo *ti);
   llvm::Type *pointerTypeToLlvm(Meta::TypeInfo *pointed);
 
   std::unique_ptr<llvm::LLVMContext> mContext;
-  std::unique_ptr<llvm::IRBuilderBase> mBuilder;
+
+  // TODO these should be in 'module builder' object
+  // only valid during a call to generate
+  llvm::IRBuilderBase *mBuilder = nullptr;
+  llvm::Module *mModule = nullptr;
 };
 
 // type-hiding unique pointer to llvm::Module
@@ -64,6 +76,7 @@ public:
 
   llvm::Module &operator*() { return *mModule; }
   llvm::Module *operator->() { return mModule; }
+  llvm::Module *get() { return mModule; }
 
 private:
   llvm::Module *mModule = nullptr;

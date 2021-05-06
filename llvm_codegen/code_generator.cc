@@ -27,7 +27,6 @@ ModuleWrapper::~ModuleWrapper() { delete mModule; }
 
 CodeGenerator::CodeGenerator() {
   mContext = std::make_unique<llvm::LLVMContext>();
-  mBuilder = std::make_unique<llvm::IRBuilder<>>(*mContext);
 }
 
 CodeGenerator::~CodeGenerator() = default;
@@ -35,12 +34,18 @@ CodeGenerator::~CodeGenerator() = default;
 ModuleWrapper CodeGenerator::generate(Ast::Module &moduleAST) {
 
   ModuleWrapper module(new llvm::Module(moduleAST.moduleName(), *mContext));
+  llvm::IRBuilder<> builder(*mContext);
+  mBuilder = &builder;
+  mModule = module.get();
 
   for (Ast::ModuleStatement &stmt : moduleAST.statements()) {
     stmt.visit(overloaded{
         [&](Ast::FunctionDeclaration *fd) { generateFunction(*fd, *module); },
         [](auto &) {}});
   }
+
+  mModule = nullptr;
+  mBuilder = nullptr;
 
   return module;
 }

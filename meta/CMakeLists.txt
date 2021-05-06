@@ -6,6 +6,7 @@ add_library(meta_lib
   variable_info.cc variable_info.hh
 
   built_in.cc built_in.hh
+  cookie.cc cookie.hh
 
 )
 

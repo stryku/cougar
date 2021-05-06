@@ -3,6 +3,7 @@ add_library(llvm_codegen_lib
 
   generate_function.cc
   generate_statement.cc
+  generate_expression.cc
 )
 
 target_link_libraries(llvm_codegen_lib ast_lib)
