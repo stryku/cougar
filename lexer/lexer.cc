@@ -210,16 +210,129 @@ Token Lexer::parseStringLiteral() {
   // TODO handle raw string/heredoc
   const char *firstPos = mLastPosition;
   const char *lastPos = mLastPosition;
+
   while (mLast != '"') {
-    if (mLast == 0)
+    if (mLast == 0) {
       throw std::runtime_error(fmt::format(
-          "{}: Lexer error: unerminated string literal", mLocation));
+          "{}: Lexer error: unterminated string literal", mLocation));
+    }
+
+    if (mLast == '\\') {
+      // Got escaped character. Handle this string literal separately.
+      return parseStringLiteralWithEscapedCharacters(firstPos);
+    }
+
     readNextChar();
+
     lastPos = mLastPosition;
   }
+
   readNextChar(); // skip past the closing quote
   std::string_view content(firstPos, lastPos - firstPos);
   return Token{TokenType::LitString, mTokenBeginLocation, content};
+}
+
+Token Lexer::parseStringLiteralWithEscapedCharacters(const char *firstPos) {
+
+  std::string result(firstPos, mLastPosition);
+
+  // At this point the '\' of the first escaped character has been already read.
+
+  while (mLast != '"') {
+    if (mLast == 0) {
+      throw std::runtime_error(fmt::format(
+          "{}: Lexer error: unterminated string literal", mLocation));
+    }
+
+    if (mLast == '\\') {
+      // Got escaped character. Handle this string literal separately.
+      result += readEscapedCharacter();
+    } else {
+      result += mLast;
+    }
+
+    readNextChar();
+  }
+
+  readNextChar(); // skip past the closing quote
+  std::string_view content = Utils::Zone::strdup(result);
+  return Token{TokenType::LitString, mTokenBeginLocation, content};
+}
+
+Utils::rune_t Lexer::readEscapedCharacter() {
+  readNextChar();
+  if (mLast == 0) {
+    throw std::runtime_error(
+        fmt::format("{}: Lexer error: unterminated string literal", mLocation));
+  }
+
+  const auto readDigitRune = [this] {
+    readNextChar();
+    if (mLast == 0 || !isDigit(mLast)) {
+      throw std::runtime_error(fmt::format(
+          "{}: Lexer error: Malformed escaped character", mLocation));
+    }
+  };
+
+  switch (mLast) {
+  case '\'':
+  case '\"':
+  case '\?':
+  case '\\':
+    return mLast;
+  case 'a':
+    return '\a';
+  case 'b':
+    return '\b';
+  case 'f':
+    return '\f';
+  case 'n':
+    return '\n';
+  case 'r':
+    return '\r';
+  case 't':
+    return '\t';
+  case 'v':
+    return '\v';
+  case 'x': {
+    // Hex character. Expect two digits.
+
+    readDigitRune();
+    const auto firstDigit = mLast - '0';
+
+    readDigitRune();
+    const auto secondDigit = mLast - '0';
+
+    return 16 * firstDigit + secondDigit;
+  } break;
+
+  case '0':
+  case '1':
+  case '2':
+  case '3':
+  case '4':
+  case '5':
+  case '6':
+  case '7':
+  case '8':
+  case '9': {
+    // Octal character. Expect three digits
+    const auto firstDigit = mLast - '0';
+
+    readDigitRune();
+    const auto secondDigit = mLast - '0';
+
+    readDigitRune();
+    const auto thirdDigit = mLast - '0';
+
+    return 64 * firstDigit + 8 * secondDigit + thirdDigit;
+  }
+
+  default: {
+    throw std::runtime_error(
+        fmt::format("{}: Lexer error: unknown escaped character", mLocation));
+  }
+  }
 }
 
 Utils::List<Token> lexBuffer(std::string_view buffer) {

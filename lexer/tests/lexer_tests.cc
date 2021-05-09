@@ -38,4 +38,32 @@ TEST(LexerTest, EmptyStringLiteral) {
   EXPECT_THAT(result, TokenListEq(expected));
 }
 
+TEST(LexerTest, NonEmptyStringLiteral) {
+  const auto source =
+      R"("0123456789qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM~`!@#$%^&*()_+-={}|[]:<>?,./;' ")";
+  Lexer lex{source};
+
+  const auto result = lex.lex();
+  const auto expected = {
+      Token{TokenType::LitString,
+            {},
+            "0123456789qwertyuiopasdfghjklzxcvbnmQWERTYUIOPA"
+            "SDFGHJKLZXCVBNM~`!@#$%^&*()_+-={}|[]:<>?,./;' "},
+      EOF_TOKEN};
+
+  EXPECT_THAT(result, TokenListEq(expected));
+}
+
+TEST(LexerTest, StringLiteralWithEscapedCharacters) {
+  const auto source = R"("\'\"\?\\\a\b\f\n\r\t\v\101\x42")";
+  Lexer lex{source};
+
+  const auto result = lex.lex();
+  const auto expected = {
+      Token{TokenType::LitString, {}, "\'\"\?\\\a\b\f\n\r\t\v\101\x42"},
+      EOF_TOKEN};
+
+  EXPECT_THAT(result, TokenListEq(expected));
+}
+
 } // namespace Cougar::Lexer::Tests

@@ -35,6 +35,9 @@ private:
   Token parseIdentifier();
   Token parseSingleCharacterToken();
   Token parseStringLiteral();
+  Token parseStringLiteralWithEscapedCharacters(const char *firstPos);
+
+  Utils::rune_t readEscapedCharacter();
 
   bool atNumberLiteral() const;
 
