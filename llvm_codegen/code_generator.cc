@@ -8,6 +8,7 @@
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/LegacyPassManager.h>
 #include <llvm/IR/Module.h>
+#include <llvm/IR/Verifier.h>
 
 #include <llvm/Support/FileSystem.h>
 #include <llvm/Support/Host.h>
@@ -113,6 +114,12 @@ void CodeGenerator::compile(ModuleWrapper &module) {
 
 void CodeGenerator::dumpIR(ModuleWrapper &module) {
   module->print(llvm::errs(), nullptr);
+}
+
+bool CodeGenerator::verify(ModuleWrapper &module) {
+
+  bool broken = llvm::verifyModule(*module, &llvm::errs());
+  return !broken;
 }
 
 } // namespace Cougar::LlvmCodeGenerator

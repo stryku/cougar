@@ -167,6 +167,13 @@ void compileFile(std::string_view path, Phase stopAfter,
     return;
   }
 
+  // verify
+  bool moduleOk = codeGen.verify(llvmModule);
+  if (!moduleOk) {
+    fmt::print("Module verification failed\n");
+    throw std::runtime_error("Generated IR verification failed");
+  }
+
   codeGen.compile(llvmModule);
 
   // TODO link

@@ -41,6 +41,9 @@ public:
   void compile(ModuleWrapper &module);
   void dumpIR(ModuleWrapper &module);
 
+  // Verifies module, returns 'true' if ok
+  bool verify(ModuleWrapper &module);
+
 private:
   // functions
   void generateFunction(Ast::FunctionDeclaration &funAST, llvm::Module &module);
