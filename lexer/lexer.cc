@@ -46,7 +46,7 @@ constexpr ReservedWord RESERVED_WORDS[] = {{"return", TokenType::KwReturn},
 
 };
 
-bool isNumber(Utils::rune_t c) { return std::isdigit(c); }
+bool isDigit(Utils::rune_t c) { return std::isdigit(c); }
 
 bool isIdentifierFirst(Utils::rune_t c) { return std::isalpha(c) || c == '_'; }
 bool isIdentifier(Utils::rune_t c) { return std::isalnum(c) || c == '_'; }
@@ -96,7 +96,7 @@ Token Lexer::getNext() {
     return makeToken(TokenType::Eof);
   }
 
-  if (isNumber(mLast))
+  if (atNumberLiteral())
     return parseNumber();
 
   if (isIdentifierFirst(mLast))
@@ -107,6 +107,18 @@ Token Lexer::getNext() {
 
   // single characters
   return parseSingleCharacterToken();
+}
+
+bool Lexer::atNumberLiteral() const {
+  // check if may be at the beginning of a number literal
+  if (isDigit(mLast))
+    return true;
+
+  if (mLast == '.') {
+    return isDigit(mDecoder.peekNext());
+  }
+
+  return false;
 }
 
 Token Lexer::parseSingleCharacterToken() {
@@ -140,10 +152,36 @@ void Lexer::skipWhitespace() {
 }
 
 Token Lexer::parseNumber() {
-  while (isNumber(mLast)) {
+
+  // before comma
+  while (isDigit(mLast)) {
     mLocation.column++;
     readNextChar();
+    // accept single apostrophe between digits
+    if (mLast == '\'') {
+      mLocation.column++;
+      readNextChar();
+    }
   }
+
+  // accpet dot
+  if (mLast != '.') {
+    return makeToken(TokenType::LitNumber);
+  }
+  mLocation.column++;
+  readNextChar();
+
+  while (isDigit(mLast)) {
+    mLocation.column++;
+    readNextChar();
+    // accept single apostrophe between digits
+    if (mLast == '\'') {
+      mLocation.column++;
+      readNextChar();
+    }
+  }
+
+  // TODO accept E, e
   return makeToken(TokenType::LitNumber);
 }
 

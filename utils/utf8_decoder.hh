@@ -23,7 +23,7 @@ public:
   }
 
   const char *getCurrentPosition() const {
-    return reinterpret_cast<const char *>(mCurrent);
+    return reinterpret_cast<const char *>(mPrevCurrent);
   }
 
   rune_t next() {
@@ -32,10 +32,11 @@ public:
     return n;
   }
 
-  rune_t peekNext() { return mNext; }
+  rune_t peekNext() const { return mNext; }
 
 private:
   rune_t doGetNext() {
+    mPrevCurrent = mCurrent;
     if (mCurrent == mEnd)
       return 0;
 
@@ -104,6 +105,7 @@ private:
     return *(mCurrent++) & 0x3F;
   }
 
+  const std::uint8_t *mPrevCurrent = nullptr;
   const std::uint8_t *mCurrent = nullptr;
   const std::uint8_t *mEnd = nullptr;
   rune_t mNext;

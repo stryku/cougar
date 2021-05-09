@@ -36,6 +36,8 @@ private:
   Token parseSingleCharacterToken();
   Token parseStringLiteral();
 
+  bool atNumberLiteral() const;
+
   Utils::rune_t mLast = 0;
 
   const char *mCurrentTokenBegin = nullptr;
