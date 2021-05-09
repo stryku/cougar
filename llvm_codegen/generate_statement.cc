@@ -38,4 +38,8 @@ void CodeGenerator::generateStatement(Ast::StFunctionCall &stmt) {
   mBuilder->CreateCall(fun, args, llvm::Twine(stmt.name));
 }
 
+void CodeGenerator::generateStatement(Ast::StReturn &) {
+  // TODO
+}
+
 } // namespace Cougar::LlvmCodeGenerator

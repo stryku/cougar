@@ -42,9 +42,34 @@ Ast::Statement *Parser::parseStatements(TokenIterator &it) {
 
 Statement *Parser::parseStatement(TokenIterator &it) {
 
+  if (it->type == TokenType::KwReturn) {
+    return parseReturnStatement(it);
+  }
+
   Statement *fc = parseFunctionCall(it);
 
   return fc;
+}
+
+Statement *Parser::parseReturnStatement(TokenIterator &it) {
+  assert(it->type == TokenType::KwReturn);
+
+  auto first = it;
+  ++it;
+
+  StReturn ret;
+
+  if (it->type != TokenType::Semicolon) {
+    ret.expression = parseExpression(it);
+  }
+
+  if (it->type != TokenType::Semicolon) {
+    mDiag.error(it->location, "Expected ';'");
+    return nullptr;
+  }
+  ++it;
+
+  return Zone::make<Statement>(ret, &*first);
 }
 
 Statement *Parser::parseFunctionCall(TokenIterator &it) {

@@ -8,8 +8,11 @@ namespace Cougar::Ast {
 
 void Expression::doDump(int indent) const {
   std::visit(overloaded{[&](const ExStringLiteral &d) {
-               iprint(indent, "StringLiteral(\"{}\")", d.content);
-             }},
+                          iprint(indent, "StringLiteral(\"{}\")", d.content);
+                        },
+                        [&](const ExNumberLiteral &d) {
+                          iprint(indent, "NumLiteral(\"{}\")", d.content);
+                        }},
              mData);
   if (mType) {
     iprint(indent + 2, "[type resolved as:]");

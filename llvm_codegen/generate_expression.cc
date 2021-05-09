@@ -32,4 +32,8 @@ llvm::Value *CodeGenerator::generateExpression(Ast::ExStringLiteral &strLit) {
   return mBuilder->CreateConstGEP2_64(arrayType, strConst, 0, 0);
 }
 
+llvm::Value *CodeGenerator::generateExpression(Ast::ExNumberLiteral &) {
+  throw std::logic_error("Unable to generate code for number literal");
+}
+
 } // namespace Cougar::LlvmCodeGenerator

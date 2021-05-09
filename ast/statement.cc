@@ -31,6 +31,13 @@ void dumpStatement(int indent, const StFunctionCall &f) {
   }
 }
 
+void dumpStatement(int indent, const StReturn &s) {
+  iprint(indent, "Return");
+  if (s.expression) {
+    s.expression->dump(indent + 2);
+  }
+}
+
 } // namespace
 
 void Statement::doDump(int indent) const {

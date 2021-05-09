@@ -121,6 +121,7 @@ void compileFile(std::string_view path, Phase stopAfter,
     } else {
       fmt::print("AST not generated due to  parse errors\n");
     }
+    return;
   }
 
   if (!module || diag.hasErrors()) {

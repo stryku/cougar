@@ -93,6 +93,11 @@ void Resolver::resolveStatement(Ast::Statement *stmt, Meta::Scope *scope) {
                          [&](StFunctionCall &s) {
                            resolveFunctionCall(stmt->token()->location, s,
                                                scope);
+                         },
+                         [&](StReturn &r) {
+                           // TODO
+                           if (r.expression)
+                             resolveExpression(r.expression, scope);
                          }});
 }
 

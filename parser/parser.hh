@@ -55,7 +55,10 @@ private:
   Ast::Statement *parseStatements(TokenIterator &it);
   Ast::Statement *parseStatement(TokenIterator &it);
   Ast::Statement *parseFunctionCall(TokenIterator &it);
+  Ast::Statement *parseReturnStatement(TokenIterator &it);
+
   Ast::ParamPack *parseParamPack(TokenIterator &it);
+
   Ast::Expression *parseExpression(TokenIterator &it);
 
   Utils::Diagnostics &mDiag;

@@ -33,6 +33,16 @@ Expression *Parser::parseExpression(TokenIterator &it) {
     ++it;
     return e;
   }
+
+  if (it->type == TokenType::LitNumber) {
+    ExNumberLiteral l;
+    l.content = it->content;
+
+    Expression *e = Zone::make<Expression>(l, &*it);
+    ++it;
+    return e;
+  }
+
   return nullptr;
 }
 

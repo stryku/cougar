@@ -18,8 +18,10 @@ class FunctionDeclaration;
 class Statement;
 struct StGroup;
 struct StFunctionCall;
+struct StReturn;
 
 struct ExStringLiteral;
+struct ExNumberLiteral;
 
 } // namespace Cougar::Ast
 
@@ -52,9 +54,11 @@ private:
   // statements
   void generateStatement(Ast::StGroup &grp);
   void generateStatement(Ast::StFunctionCall &);
+  void generateStatement(Ast::StReturn &);
 
   // expressions
   llvm::Value *generateExpression(Ast::ExStringLiteral &);
+  llvm::Value *generateExpression(Ast::ExNumberLiteral &);
 
   // types
   llvm::Type *simpleTypeToLlvm(std::string_view name);

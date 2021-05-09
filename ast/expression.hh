@@ -14,9 +14,16 @@ struct ExStringLiteral {
   std::string_view content;
 };
 
+struct ExNumberLiteral {
+  std::string_view content;
+};
+
 class Expression : public NodeOnToken {
 public:
   Expression(const ExStringLiteral &d, const Lexer::Token *tok = nullptr)
+      : NodeOnToken(tok), mData(d) {}
+
+  Expression(const ExNumberLiteral &d, const Lexer::Token *tok = nullptr)
       : NodeOnToken(tok), mData(d) {}
 
   template <typename F> auto visit(F f) { return std::visit(f, mData); }
@@ -32,7 +39,7 @@ public:
 private:
   void doDump(int indent = 0) const override;
 
-  std::variant<ExStringLiteral> mData;
+  std::variant<ExStringLiteral, ExNumberLiteral> mData;
   Meta::TypeInfo *mType = nullptr;
 };
 
