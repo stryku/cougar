@@ -12,14 +12,15 @@ namespace Cougar::LlvmCodeGenerator {
 llvm::Value *CodeGenerator::generateExpression(Ast::ExStringLiteral &strLit) {
 
   llvm::ArrayType *arrayType = llvm::ArrayType::get(
-      llvm::Type::getInt8PtrTy(*mContext), strLit.content.size() + 1);
+      llvm::Type::getInt8Ty(*mContext), strLit.content.size() + 1);
 
   llvm::GlobalVariable *strConst = new llvm::GlobalVariable(
       *mModule,                                        // module
       arrayType,                                       // type
       true,                                            // is const
       llvm::GlobalValue::LinkageTypes::PrivateLinkage, // linkage
-      nullptr                                          // initializer
+      nullptr,                                         // initializer
+      llvm::Twine("str_const")                         // name
   );
 
   llvm::Constant *c =
