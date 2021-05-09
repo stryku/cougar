@@ -18,6 +18,8 @@ public:
     mEnd = reinterpret_cast<const std::uint8_t *>(utf8Buffer.end());
 
     // TODO detect and skip over BOM here
+
+    mNext = doGetNext();
   }
 
   const char *getCurrentPosition() const {
@@ -25,6 +27,15 @@ public:
   }
 
   rune_t next() {
+    rune_t n = mNext;
+    mNext = doGetNext();
+    return n;
+  }
+
+  rune_t peekNext() { return mNext; }
+
+private:
+  rune_t doGetNext() {
     if (mCurrent == mEnd)
       return 0;
 
@@ -85,7 +96,6 @@ public:
     throw std::runtime_error("Invalid UTF-8 sequence");
   }
 
-private:
   std::uint8_t getContinuation() {
     if (mCurrent == mEnd)
       throw std::runtime_error("Premature UTF-8 sequence end");
@@ -96,6 +106,7 @@ private:
 
   const std::uint8_t *mCurrent = nullptr;
   const std::uint8_t *mEnd = nullptr;
+  rune_t mNext;
 };
 
 } // namespace Cougar::Utils

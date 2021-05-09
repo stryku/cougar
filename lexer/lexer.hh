@@ -29,6 +29,7 @@ private:
 
   void readNextChar();
   void skipWhitespace();
+  Utils::rune_t peekNext();
 
   Token parseNumber();
   Token parseIdentifier();

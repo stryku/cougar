@@ -40,4 +40,21 @@ TEST(Utf8DecoderTests, NormalizeEndline) {
   EXPECT_EQ(0, decoder.next());
 }
 
+TEST(Utf8DecoderTests, PeekNext) {
+  const char *input = "ąb😉";
+
+  Utf8Decoder decoder(input);
+
+  EXPECT_EQ(U'ą', decoder.peekNext());
+  EXPECT_EQ(U'ą', decoder.next());
+  EXPECT_EQ(U'b', decoder.peekNext());
+  EXPECT_EQ(U'b', decoder.next());
+  EXPECT_EQ(U'😉', decoder.peekNext());
+  EXPECT_EQ(U'😉', decoder.next());
+  EXPECT_EQ(0, decoder.peekNext());
+  EXPECT_EQ(0, decoder.next());
+  EXPECT_EQ(0, decoder.peekNext());
+  EXPECT_EQ(0, decoder.next());
+}
+
 } // namespace Cougar::Utils::Tests

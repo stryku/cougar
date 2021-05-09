@@ -80,6 +80,8 @@ void Lexer::readNextChar() {
   mLast = mDecoder.next();
 }
 
+Utils::rune_t Lexer::peekNext() { return mDecoder.peekNext(); }
+
 Token Lexer::getNext() {
   if (mLast == 0) {
     readNextChar();
