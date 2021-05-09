@@ -33,6 +33,13 @@ public:
     return *this;
   }
 
+  ListIterator operator++(int) {
+    assert(mNode);
+    auto result = *this;
+    mNode = mNode->mNext;
+    return result;
+  }
+
   bool operator!=(const ListIterator &o) const { return mNode != o.mNode; }
   bool operator==(const ListIterator &o) const { return mNode == o.mNode; }
 
@@ -88,3 +95,16 @@ public:
 };
 
 } // namespace Cougar::Utils
+
+// Token fomratter
+template <typename T> struct fmt::formatter<Cougar::Utils::List<T>> {
+  template <typename ParseContext> constexpr auto parse(ParseContext &ctx) {
+    return ctx.begin();
+  }
+
+  template <typename FormatContext>
+  auto format(const Cougar::Utils::List<T> &list, FormatContext &ctx) {
+    return format_to(ctx.out(), "{{{}}}",
+                     fmt::join(list.begin(), list.end(), ", "));
+  }
+};
