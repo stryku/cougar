@@ -12,6 +12,8 @@ find_package(fmt CONFIG REQUIRED)
 find_package(Threads REQUIRED)
 find_package(GTest CONFIG REQUIRED)
 
+enable_testing()
+
 add_subdirectory(lexer)
 add_subdirectory(ast)
 add_subdirectory(parser)
